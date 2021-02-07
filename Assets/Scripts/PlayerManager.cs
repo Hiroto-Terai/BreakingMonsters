@@ -20,10 +20,13 @@ public class PlayerManager : MonoBehaviour
         //myRigidBody2d.velocity = new Vector3(Input.GetAxis("Horizontal") * speed, 0f, 0f);
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            transform.position += new Vector3(2f * Time.deltaTime * speed, 0f, 0f);
+            if(transform.position.x < 1.8){
+                transform.position += new Vector3(2f * Time.deltaTime * speed, 0f, 0f);
+            }
         }
         else if (Input.GetKey(KeyCode.LeftArrow))
         {
+            if(transform.position.x > -1.8){
             transform.position += new Vector3(-2f * Time.deltaTime * speed, 0f, 0f);
         }
 
