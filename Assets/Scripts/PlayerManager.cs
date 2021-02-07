@@ -20,7 +20,7 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKey(KeyCode.RightArrow))
         {
             if(transform.position.x < 1.8){
-                transform.position += Vector3.rigit * Time.deltaTime * speed;
+                transform.position += Vector3.right * Time.deltaTime * speed;
             }
         }
         else if (Input.GetKey(KeyCode.LeftArrow))
