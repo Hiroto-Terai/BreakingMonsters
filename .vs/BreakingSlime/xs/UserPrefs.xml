@@ -1,0 +1,22 @@
+﻿<Properties StartupConfiguration="{B28D78CC-ED66-ABA7-CDF0-58DA3C0C94F5}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/PlayerManager.cs">
+    <Files>
+      <File FileName="Assets/Editor/AutoSave.cs" Line="24" Column="1" />
+      <File FileName="Assets/Scripts/PlayerManager.cs" Line="16" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="MonoDevelop.UnitTesting.TestPad">
+        <State name="__root__">
+          <Node name="BreakingSlime" expanded="True" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="067560a4-e986-485b-928d-fcab276e246d" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
