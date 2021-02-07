@@ -34,8 +34,7 @@ public class PlayerManager : MonoBehaviour
             Touch touch = Input.GetTouch(0);
             if (touch.phase == TouchPhase.Moved)
             {
-                transform.Translate(touch.deltaPosition.x, touch.deltaPosition.y, 0.0f);
-                //transform.position += new Vector3(touch.position.x, 0, 0);
+                transform.position += new Vector3(touch.position.x, 0, 0);
             }     
         }
     }
