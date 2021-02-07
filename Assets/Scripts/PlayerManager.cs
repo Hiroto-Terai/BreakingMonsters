@@ -27,7 +27,8 @@ public class PlayerManager : MonoBehaviour
         else if (Input.GetKey(KeyCode.LeftArrow))
         {
             if(transform.position.x > -1.8){
-            transform.position += new Vector3(-2f * Time.deltaTime * speed, 0f, 0f);
+                transform.position += new Vector3(-2f * Time.deltaTime * speed, 0f, 0f);
+            }
         }
 
         // プレイヤーの移動(スマホでのタッチ操作)
@@ -41,5 +42,4 @@ public class PlayerManager : MonoBehaviour
             }     
         }
     }
-        
 }
