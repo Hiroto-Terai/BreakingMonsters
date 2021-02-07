@@ -17,17 +17,16 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //myRigidBody2d.velocity = new Vector3(Input.GetAxis("Horizontal") * speed, 0f, 0f);
         if (Input.GetKey(KeyCode.RightArrow))
         {
             if(transform.position.x < 1.8){
-                transform.position += new Vector3(2f * Time.deltaTime * speed, 0f, 0f);
+                transform.position += Vector3.right * Time.deltaTime * speed;
             }
         }
         else if (Input.GetKey(KeyCode.LeftArrow))
         {
             if(transform.position.x > -1.8){
-                transform.position += new Vector3(-2f * Time.deltaTime * speed, 0f, 0f);
+                transform.position += Vector3.left * Time.deltaTime * speed;
             }
         }
 
