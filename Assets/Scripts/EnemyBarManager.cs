@@ -5,7 +5,6 @@ using UnityEngine;
 public class EnemyBarManager : MonoBehaviour
 {
   GameObject ball;
-  transform
 
   // Start is called before the first frame update
   void Start()
