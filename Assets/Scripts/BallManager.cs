@@ -35,4 +35,23 @@ public class BallManager : MonoBehaviour
     // 大きさ1のベクトル(normalized) * 速さ
     myRigidbody2d.velocity = velocity.normalized * clampedSpeed;
   }
+
+  private void OnCollisionEnter2D(Collision2D collision)
+  {
+    // プレイヤーにあたった時に、跳ね返る方向を変える
+    // タグで衝突相手を識別
+    if (collision.gameObject.CompareTag("Player"))
+    {
+      // 現在のプレイヤーの位置を取得
+      Vector2 playerPos = collision.transform.position;
+      // ボールの位置を取得
+      Vector2 ballPos = myTransform.position;
+      // プレイヤーから見たボールの方向を計算
+      Vector2 direction = (ballPos - playerPos).normalized;
+      // 現在のボールの速さを取得
+      float speed = myRigidbody2d.velocity.magnitude;
+      // 速度を変更
+      myRigidbody2d.velocity = direction * speed;
+    }
+  }
 }
