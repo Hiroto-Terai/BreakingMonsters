@@ -30,10 +30,42 @@ public class BallManager : MonoBehaviour
     // 速さを計算
     // Clampで速さを制限
     // Mathf.Clamp(値, 最小値, 最大値)のように用いる
+    // magnitudeでベクトルの大きさを計測
     float clampedSpeed = Mathf.Clamp(velocity.magnitude, minSpeed, maxSpeed);
     // 速度を変更
     // 大きさ1のベクトル(normalized) * 速さ
     myRigidbody2d.velocity = velocity.normalized * clampedSpeed;
+
+    // 移動する方向のベクトルを正規化(大きさ1のベクトルに変換)
+    Vector2 velocityNormalized = myRigidbody2d.velocity.normalized;
+
+    //移動する方向を一定の範囲に制限する
+    // 垂直方向は垂直から10度内の範囲には入らないようにする
+    float limitVerticalDeg = 10f;
+    // 水平方向は垂直から45度内の範囲には入らないようにする
+    float limitHorizontalDeg = 45f;
+
+    // x方向のベクトルが正の場合
+    if (velocityNormalized.x >= 0f)
+    {
+      velocityNormalized.x = Mathf.Clamp(velocityNormalized.x, Mathf.Cos(Mathf.Deg2Rad * (90 - limitVerticalDeg)), Mathf.Cos(Mathf.Deg2Rad * (0 + limitHorizontalDeg)));
+    }
+    // x方向のベクトルが負の場合
+    else
+    {
+      velocityNormalized.x = Mathf.Clamp(velocityNormalized.x, Mathf.Cos(Mathf.Deg2Rad * (180 - limitHorizontalDeg)), Mathf.Cos(Mathf.Deg2Rad * (90 + limitVerticalDeg)));
+    }
+
+    // y方向のベクトルが正の場合
+    if (velocityNormalized.y >= 0f)
+    {
+      velocityNormalized.y = Mathf.Clamp(velocityNormalized.y, Mathf.Sin(Mathf.Deg2Rad * (0 + limitHorizontalDeg)), Mathf.Sin(Mathf.Deg2Rad * (90 + limitVerticalDeg)));
+    }
+    // y方向のベクトルが負の場合
+    else
+    {
+      velocityNormalized.y = Mathf.Clamp(velocityNormalized.y, Mathf.Sin(Mathf.Deg2Rad * (270 - limitVerticalDeg)), Mathf.Sin(Mathf.Deg2Rad * (180 + limitHorizontalDeg)));
+    }
   }
 
   private void OnCollisionEnter2D(Collision2D collision)
