@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameOver : MonoBehaviour
 {
@@ -24,6 +25,20 @@ public class GameOver : MonoBehaviour
       gameOverText.text = "Game Over...";
       Time.timeScale = 0f;
       isGameOver = true;
+    }
+
+    if (isGameOver == true)
+    {
+      if (Input.touchCount > 0)
+      {
+        Touch touch = Input.GetTouch(0);
+
+        if (touch.phase == TouchPhase.Began)
+        {
+          Time.timeScale = 1;
+          SceneManager.LoadScene("Play");
+        }
+      }
     }
   }
 }
