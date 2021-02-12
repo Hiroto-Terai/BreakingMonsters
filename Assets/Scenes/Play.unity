@@ -213,6 +213,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1536177700935796315, guid: 5e07b75dde33e40a6bbf2b2cfa2dff2f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 5617093375550155994, guid: 5e07b75dde33e40a6bbf2b2cfa2dff2f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1289,6 +1294,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  minSpeed: 5
+  maxSpeed: 10
 --- !u!50 &1172171255
 Rigidbody2D:
   serializedVersion: 4
@@ -1765,7 +1772,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 113832d937aa0414cb25054071df641b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
+  speed: 5
 --- !u!1 &2060648177
 GameObject:
   m_ObjectHideFlags: 0
