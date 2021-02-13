@@ -5,8 +5,10 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
   // プレイヤーの移動の速さ
-  public float speed = 10f;
+  public float speed = 5f;
   Rigidbody2D myRigidBody2d;
+
+  Transform tf;
 
   private float deltaX, deltaY;
 
@@ -14,6 +16,7 @@ public class PlayerManager : MonoBehaviour
   void Start()
   {
     myRigidBody2d = GetComponent<Rigidbody2D>();
+    tf = GetComponent<Transform>();
   }
 
   // Update is called once per frame
@@ -34,32 +37,41 @@ public class PlayerManager : MonoBehaviour
       }
     }
 
-    // プレイヤーの移動(スマホでのタッチ操作)
+
+    Vector2 direction = new Vector2(0, 0);
+
     if (Input.touchCount > 0)
     {
-      // タッチ情報の取得
       Touch touch = Input.GetTouch(0);
-
       Vector2 touchPos = Camera.main.ScreenToWorldPoint(touch.position);
 
       switch (touch.phase)
       {
         case TouchPhase.Began:
-          Debug.Log(touch.phase);
-          Debug.Log(touchPos);
-          deltaX = touchPos.x - transform.position.x;
-          deltaY = touchPos.y - transform.position.y;
+          // 画面に指が触れた時
+          this.transform.position = touchPos;
           break;
-
         case TouchPhase.Moved:
-          myRigidBody2d.MovePosition(new Vector2(touchPos.x - deltaX, touchPos.y - deltaY));
-          Debug.Log(this.transform.position);
-          break;
-
-        case TouchPhase.Ended:
-          myRigidBody2d.velocity = Vector2.zero;
+          // 指を動かしている時
+          this.transform.position = new Vector2(transform.position.x + touchPos.x * speed, -3);
           break;
       }
+
+      // プレイヤーの座標の取得と移動量
+      Vector2 pos = this.transform.position;
+      // pos += directions * speed * Time.deltaTime;
+      pos = new Vector2(touchPos.x, -3);
+
+      if (pos.x > 1.8)
+      {
+        pos.x = 1.8f;
+      }
+      else if (pos.x < -1.8)
+      {
+        pos.x = -1.8f;
+      }
+      // プレイヤーの新規位置とする
+      transform.position = pos;
     }
   }
 }
