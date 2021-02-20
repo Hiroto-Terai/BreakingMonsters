@@ -27,7 +27,7 @@ public class LoadScene : MonoBehaviour
     {
       if (col = Button.GetComponent<Collider2D>())
       {
-        SceneManager.LoadScene("Play", LoadSceneMode.Single);
+        SceneManager.LoadScene("PlayEasyMode", LoadSceneMode.Single);
       }
     }
   }

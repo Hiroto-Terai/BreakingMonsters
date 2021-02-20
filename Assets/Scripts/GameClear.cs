@@ -35,7 +35,7 @@ public class GameClear : MonoBehaviour
         if (touch.phase == TouchPhase.Began)
         {
           Time.timeScale = 1;
-          SceneManager.LoadScene("Play");
+          SceneManager.LoadScene("EasyModePlay");
         }
       }
     }
