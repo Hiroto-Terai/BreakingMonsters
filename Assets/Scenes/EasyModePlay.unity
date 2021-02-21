@@ -201,6 +201,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameClearText: {fileID: 554187902}
+  Music: {fileID: 106692531}
+  GameClearSound: {fileID: 8300000, guid: e0db3e7601abd4661987d280c455de3c, type: 3}
 --- !u!1 &459034150
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,6 +250,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameOverText: {fileID: 1239383649}
+  Music: {fileID: 106692531}
+  GameOverSound: {fileID: 8300000, guid: e7305c5fb15d1445ea853eec9b1e395f, type: 3}
 --- !u!1001 &475216650
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1301,7 +1305,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1064758083
 Transform:
   m_ObjectHideFlags: 0
@@ -1326,11 +1330,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: e0db3e7601abd4661987d280c455de3c, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
