@@ -201,7 +201,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameClearText: {fileID: 554187902}
-  PlayingAudio: {fileID: 0}
 --- !u!1 &459034150
 GameObject:
   m_ObjectHideFlags: 0
@@ -1022,6 +1021,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 1536177700935796315, guid: 5e07b75dde33e40a6bbf2b2cfa2dff2f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 5617093375550155994, guid: 5e07b75dde33e40a6bbf2b2cfa2dff2f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1598,6 +1602,8 @@ MonoBehaviour:
   speed: 5
   minSpeed: 5
   maxSpeed: 10
+  PlayerColSound: {fileID: 8300000, guid: 7eaf0020508a4429da1b0fd8b80dfc6c, type: 3}
+  EnemyColSound: {fileID: 8300000, guid: 7eaf0020508a4429da1b0fd8b80dfc6c, type: 3}
 --- !u!50 &1172171255
 Rigidbody2D:
   serializedVersion: 4
@@ -2069,7 +2075,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: f25f005ca25644a6d8f5ac1d2c7984de, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.2
+  m_Volume: 0.087
   m_Pitch: 1
   Loop: 1
   Mute: 0
