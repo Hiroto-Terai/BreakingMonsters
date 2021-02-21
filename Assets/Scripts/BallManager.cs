@@ -18,7 +18,7 @@ public class BallManager : MonoBehaviour
   void Start()
   {
     myRigidbody2d = GetComponent<Rigidbody2D>();
-    if (SceneManager.GetActiveScene().name == "Play")
+    if (SceneManager.GetActiveScene().name == "EasyModePlay")
     {
       myRigidbody2d.velocity = new Vector3(speed, speed, 0);
     }
