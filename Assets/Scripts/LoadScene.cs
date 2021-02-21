@@ -8,6 +8,7 @@ public class LoadScene : MonoBehaviour
   GameObject mainCamera;
   GameObject Button;
   Camera main;
+  public AudioClip StartSound;
 
   // Start is called before the first frame update
   void Start()
@@ -27,6 +28,7 @@ public class LoadScene : MonoBehaviour
     {
       if (col = Button.GetComponent<Collider2D>())
       {
+        AudioSource.PlayClipAtPoint(StartSound, transform.position);
         SceneManager.LoadScene("EasyModePlay", LoadSceneMode.Single);
       }
     }
