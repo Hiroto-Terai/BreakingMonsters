@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BallManager : MonoBehaviour
 {
@@ -17,7 +18,10 @@ public class BallManager : MonoBehaviour
   void Start()
   {
     myRigidbody2d = GetComponent<Rigidbody2D>();
-    myRigidbody2d.velocity = new Vector3(speed, speed, 0);
+    if (SceneManager.GetActiveScene().name == "EasyModePlay")
+    {
+      myRigidbody2d.velocity = new Vector3(speed, speed, 0);
+    }
     // 現在地を取得
     myTransform = transform;
   }
