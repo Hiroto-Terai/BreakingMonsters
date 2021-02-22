@@ -66,6 +66,7 @@
      <Compile Include="Assets\Scripts\LoadScene.cs" />
      <Compile Include="Assets\Scripts\PlayerManager.cs" />
      <Compile Include="Assets\Scripts\ResetText.cs" />
+     <Compile Include="Assets\Scripts\SelectMode.cs" />
      <Compile Include="Assets\Scripts\SlimeManager.cs" />
      <None Include="Assets\AnimationImporter\readme.txt" />
  <Reference Include="UnityEngine">

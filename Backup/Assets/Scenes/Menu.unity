@@ -465,6 +465,8 @@ GameObject:
   - component: {fileID: 491594749}
   - component: {fileID: 491594751}
   - component: {fileID: 491594750}
+  - component: {fileID: 491594753}
+  - component: {fileID: 491594752}
   m_Layer: 5
   m_Name: EasyMode
   m_TagString: Untagged
@@ -529,6 +531,47 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 491594748}
   m_CullTransparentMesh: 0
+--- !u!114 &491594752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491594748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 491594753}
+          m_MethodName: goToNextScene
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!114 &491594753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491594748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d62ec08965dfd4c23880ee4014782d26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextScene: EasyModePlay
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -601,7 +644,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5.954666
+  orthographic size: 4.888889
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
