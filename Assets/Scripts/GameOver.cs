@@ -11,10 +11,21 @@ public class GameOver : MonoBehaviour
   Transform myTransform;
   // ゲームオーバーの判定
   bool isGameOver = false;
+  // BGMを持っているオブジェクト
+  public GameObject Music;
+  private Transform MusicTransform;
+  // ゲームオーバーサウンド
+  // update関数内で一回だけ呼び出すためのフラグを用意
+  public AudioClip GameOverSound;
+  bool isCalledOnce;
+
   // Start is called before the first frame update
   void Start()
   {
     myTransform = this.transform;
+    MusicTransform = Music.GetComponent<Transform>();
+    // update関数内で一回だけ呼び出すためのフラグを初期化
+    isCalledOnce = false;
   }
 
   // Update is called once per frame
@@ -23,6 +34,13 @@ public class GameOver : MonoBehaviour
     if (myTransform.childCount == 0)
     {
       gameOverText.text = "Game Over...";
+      MusicTransform.GetChild(0).gameObject.SetActive(false);
+      // ゲームクリアのSEを鳴らす
+      if (!isCalledOnce)
+      {
+        isCalledOnce = true;
+        AudioSource.PlayClipAtPoint(GameOverSound, transform.position);
+      }
       Time.timeScale = 0f;
       isGameOver = true;
     }
