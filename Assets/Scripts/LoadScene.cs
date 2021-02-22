@@ -29,7 +29,7 @@ public class LoadScene : MonoBehaviour
       if (col = Button.GetComponent<Collider2D>())
       {
         AudioSource.PlayClipAtPoint(StartSound, transform.position);
-        SceneManager.LoadScene("EasyModePlay", LoadSceneMode.Single);
+        SceneManager.LoadScene("Menu", LoadSceneMode.Single);
       }
     }
   }
