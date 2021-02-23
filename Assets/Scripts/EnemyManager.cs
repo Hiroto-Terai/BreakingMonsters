@@ -20,7 +20,10 @@ public class EnemyManager : MonoBehaviour
 
   private void OnCollisionEnter2D(Collision2D collision)
   {
-    AudioSource.PlayClipAtPoint(BallColSound, transform.position);
+    if (OptionManager.isSePlaying == true)
+    {
+      AudioSource.PlayClipAtPoint(BallColSound, transform.position);
+    }
     Destroy(this.gameObject);
   }
 }

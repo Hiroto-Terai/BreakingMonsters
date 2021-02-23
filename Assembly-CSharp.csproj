@@ -64,9 +64,12 @@
      <Compile Include="Assets\Scripts\GameClear.cs" />
      <Compile Include="Assets\Scripts\GameOver.cs" />
      <Compile Include="Assets\Scripts\LoadScene.cs" />
+     <Compile Include="Assets\Scripts\OptionManager.cs" />
      <Compile Include="Assets\Scripts\PlayerManager.cs" />
      <Compile Include="Assets\Scripts\ResetText.cs" />
+     <Compile Include="Assets\Scripts\SelectMode.cs" />
      <Compile Include="Assets\Scripts\SlimeManager.cs" />
+     <Compile Include="Assets\Scripts\getBgmStatus.cs" />
      <None Include="Assets\AnimationImporter\readme.txt" />
  <Reference Include="UnityEngine">
  <HintPath>/Applications/2019.4.10f1/Unity.app/Contents/Managed/UnityEngine/UnityEngine.dll</HintPath>

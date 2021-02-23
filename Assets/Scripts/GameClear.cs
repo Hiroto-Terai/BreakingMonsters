@@ -11,7 +11,6 @@ public class GameClear : MonoBehaviour
   bool isGameClear = false;
   // BGMを持っているオブジェクト
   public GameObject Music;
-  private Transform MusicTransform;
   // ゲームクリアサウンド
   // update関数内で一回だけ呼び出すためのフラグを用意
   public AudioClip GameClearSound;
@@ -21,7 +20,6 @@ public class GameClear : MonoBehaviour
   void Start()
   {
     myTransform = transform;
-    MusicTransform = Music.GetComponent<Transform>();
     // update関数内で一回だけ呼び出すためのフラグを初期化
     isCalledOnce = false;
   }
@@ -33,12 +31,15 @@ public class GameClear : MonoBehaviour
     {
       gameClearText.text = "Game Clear!!";
       // BGMの停止
-      MusicTransform.GetChild(0).gameObject.SetActive(false);
+      Music.SetActive(false);
       // ゲームクリアのSEを鳴らす
       if (!isCalledOnce)
       {
         isCalledOnce = true;
-        AudioSource.PlayClipAtPoint(GameClearSound, transform.position);
+        if (OptionManager.isSePlaying == true)
+        {
+          AudioSource.PlayClipAtPoint(GameClearSound, transform.position);
+        }
       }
       Time.timeScale = 0f;
       isGameClear = true;
@@ -53,7 +54,7 @@ public class GameClear : MonoBehaviour
         if (touch.phase == TouchPhase.Began)
         {
           Time.timeScale = 1;
-          SceneManager.LoadScene("EasyModePlay");
+          FadeManager.Instance.LoadScene("EasyModePlay", 0.3f);
         }
       }
     }
