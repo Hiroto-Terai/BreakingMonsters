@@ -32,12 +32,10 @@ public class OptionManager : MonoBehaviour
     if (OptionManager.isBgmPlaying == true)
     {
       Music.GetComponent<AudioSource>().volume = 0.15f;
-      this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
     }
     else
     {
       Music.GetComponent<AudioSource>().volume = 0f;
-      this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
     }
   }
 
@@ -50,6 +48,14 @@ public class OptionManager : MonoBehaviour
   public void openOption()
   {
     OptionCanvas.SetActive(true);
+    if (OptionManager.isBgmPlaying == true)
+    {
+      return;
+    }
+    else
+    {
+      GameObject.Find("bgmOff").SetActive(true);
+    }
     Time.timeScale = 0f;
   }
 
