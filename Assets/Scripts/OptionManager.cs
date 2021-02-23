@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 
+
 public class OptionManager : MonoBehaviour
 {
   // オプションキャンバスのゲームオブジェクト
@@ -17,9 +18,10 @@ public class OptionManager : MonoBehaviour
   public static bool isBgmPlaying = true;
 
   // SEが再生されているか
-  public static bool isSePlaying;
+  public static bool isSePlaying = true;
 
   public GameObject Music;
+  public AudioClip ButtonSound;
 
   // Start is called before the first frame update
   void Start()
@@ -47,8 +49,10 @@ public class OptionManager : MonoBehaviour
 
   public void openOption()
   {
+    playButtonSound();
+    Time.timeScale = 0f;
     OptionCanvas.SetActive(true);
-    if (OptionManager.isBgmPlaying == true)
+    if (isBgmPlaying == true)
     {
       return;
     }
@@ -56,34 +60,46 @@ public class OptionManager : MonoBehaviour
     {
       GameObject.Find("bgmOff").SetActive(true);
     }
-    Time.timeScale = 0f;
+    if (isSePlaying == true)
+    {
+      return;
+    }
+    else
+    {
+      GameObject.Find("seOff").SetActive(true);
+    }
   }
 
   public void closeOption()
   {
-    OptionCanvas.SetActive(false);
     Time.timeScale = 1f;
+    playButtonSound();
+    OptionCanvas.SetActive(false);
   }
 
   // Twitterを開く
   public void openTwitter()
   {
+    playButtonSound();
     Application.OpenURL(TwitterURL);
   }
 
   //インスタを開く
   public void openInstagram()
   {
+    playButtonSound();
     Application.OpenURL(InstagramURL);
   }
 
   public void openPrivacyPolicy()
   {
+    playButtonSound();
     Application.OpenURL(PrivacyPolicyURL);
   }
 
   public void goToMenuScene()
   {
+    playButtonSound();
     SceneManager.LoadScene("Menu", LoadSceneMode.Single);
   }
 
@@ -92,15 +108,40 @@ public class OptionManager : MonoBehaviour
     if (isBgmPlaying == true)
     {
       isBgmPlaying = false;
+      playButtonSound();
       Music.GetComponent<AudioSource>().volume = 0f;
       this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
     }
     else
     {
       isBgmPlaying = true;
+      playButtonSound();
       Music.GetComponent<AudioSource>().volume = 0.15f;
       this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
     }
+  }
 
+  public void SeController()
+  {
+    if (isSePlaying == true)
+    {
+      isSePlaying = false;
+      playButtonSound();
+      this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
+    }
+    else
+    {
+      isSePlaying = true;
+      playButtonSound();
+      this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
+    }
+  }
+
+  public void playButtonSound()
+  {
+    if (isSePlaying == true)
+    {
+      AudioSource.PlayClipAtPoint(ButtonSound, GameObject.Find("Main Camera").transform.position);
+    }
   }
 }

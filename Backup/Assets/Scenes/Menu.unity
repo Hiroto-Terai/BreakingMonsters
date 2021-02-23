@@ -652,6 +652,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OptionCanvas: {fileID: 270734682}
+  Music: {fileID: 0}
+  ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
 --- !u!114 &344105082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -844,6 +846,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OptionCanvas: {fileID: 270734682}
+  Music: {fileID: 0}
+  ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
 --- !u!114 &373380970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1500,6 +1504,8 @@ GameObject:
   - component: {fileID: 738455837}
   - component: {fileID: 738455839}
   - component: {fileID: 738455838}
+  - component: {fileID: 738455841}
+  - component: {fileID: 738455840}
   m_Layer: 5
   m_Name: SE
   m_TagString: Untagged
@@ -1565,6 +1571,49 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 738455836}
   m_CullTransparentMesh: 0
+--- !u!114 &738455840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 738455836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 738455841}
+          m_MethodName: SeController
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!114 &738455841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 738455836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7464f485cfcef48c2a8738ee2e993374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OptionCanvas: {fileID: 0}
+  Music: {fileID: 0}
+  ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
 --- !u!1 &748413523
 GameObject:
   m_ObjectHideFlags: 0
@@ -1807,6 +1856,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OptionCanvas: {fileID: 270734682}
+  Music: {fileID: 0}
+  ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
 --- !u!114 &876416344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2040,6 +2091,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OptionCanvas: {fileID: 270734682}
+  Music: {fileID: 0}
+  ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
 --- !u!114 &1072038623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2195,6 +2248,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OptionCanvas: {fileID: 270734682}
+  Music: {fileID: 0}
+  ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
 --- !u!114 &1320981292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2802,6 +2857,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OptionCanvas: {fileID: 270734682}
+  Music: {fileID: 0}
+  ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
 --- !u!114 &1852735443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2830,6 +2887,63 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!1001 &2067508045
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 130190, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
+      propertyPath: m_Name
+      value: FadeManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 474238, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 474238, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 474238, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 474238, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 474238, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 474238, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 474238, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 474238, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 474238, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 474238, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 474238, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fd9d58dbfb8f846f58b62a48334a0058, type: 3}
 --- !u!1 &2079454871
 GameObject:
   m_ObjectHideFlags: 0
