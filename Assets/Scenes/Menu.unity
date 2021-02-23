@@ -654,6 +654,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 270734682}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  bgmOff: {fileID: 466427623}
 --- !u!114 &344105082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -848,6 +849,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 270734682}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  bgmOff: {fileID: 0}
 --- !u!114 &373380970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -994,6 +996,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextScene: NormalModePlay
+  ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
 --- !u!1 &466427623
 GameObject:
   m_ObjectHideFlags: 0
@@ -1186,6 +1189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextScene: EasyModePlay
+  ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1257,7 +1261,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 4.888889
+  orthographic size: 4.891333
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1614,6 +1618,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 0}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  bgmOff: {fileID: 0}
 --- !u!1 &748413523
 GameObject:
   m_ObjectHideFlags: 0
@@ -1858,6 +1863,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 270734682}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  bgmOff: {fileID: 0}
 --- !u!114 &876416344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2093,6 +2099,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 270734682}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  bgmOff: {fileID: 0}
 --- !u!114 &1072038623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2250,6 +2257,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 270734682}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  bgmOff: {fileID: 0}
 --- !u!114 &1320981292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2859,6 +2867,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 270734682}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  bgmOff: {fileID: 0}
 --- !u!114 &1852735443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3038,6 +3047,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextScene: HardModePlay
+  ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
 --- !u!114 &2079454876
 MonoBehaviour:
   m_ObjectHideFlags: 0

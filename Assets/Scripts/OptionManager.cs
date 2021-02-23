@@ -22,6 +22,7 @@ public class OptionManager : MonoBehaviour
 
   public GameObject Music;
   public AudioClip ButtonSound;
+  private string sceneNameForRetry;
 
   // Start is called before the first frame update
   void Start()
@@ -39,6 +40,7 @@ public class OptionManager : MonoBehaviour
     {
       Music.GetComponent<AudioSource>().volume = 0f;
     }
+    Debug.Log(isSePlaying);
   }
 
   // Update is called once per frame
@@ -52,21 +54,14 @@ public class OptionManager : MonoBehaviour
     playButtonSound();
     Time.timeScale = 0f;
     OptionCanvas.SetActive(true);
-    if (isBgmPlaying == true)
+
+    if (isBgmPlaying != true)
     {
-      return;
+      GameObject.Find("BGM").transform.GetChild(1).gameObject.SetActive(true);
     }
-    else
+    if (isSePlaying != true)
     {
-      GameObject.Find("bgmOff").SetActive(true);
-    }
-    if (isSePlaying == true)
-    {
-      return;
-    }
-    else
-    {
-      GameObject.Find("seOff").SetActive(true);
+      GameObject.Find("SE").transform.GetChild(1).gameObject.SetActive(true);
     }
   }
 
@@ -99,8 +94,16 @@ public class OptionManager : MonoBehaviour
 
   public void goToMenuScene()
   {
+    Time.timeScale = 1f;
     playButtonSound();
-    SceneManager.LoadScene("Menu", LoadSceneMode.Single);
+    FadeManager.Instance.LoadScene("Menu", 0.3f);
+  }
+  public void Retry()
+  {
+    Time.timeScale = 1f;
+    playButtonSound();
+    sceneNameForRetry = SceneManager.GetActiveScene().name;
+    FadeManager.Instance.LoadScene(sceneNameForRetry, 0.3f);
   }
 
   public void BgmController()

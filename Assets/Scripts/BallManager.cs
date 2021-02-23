@@ -20,7 +20,7 @@ public class BallManager : MonoBehaviour
   void Start()
   {
     myRigidbody2d = GetComponent<Rigidbody2D>();
-    if (SceneManager.GetActiveScene().name == "EasyModePlay")
+    if (SceneManager.GetActiveScene().name == "EasyModePlay" || SceneManager.GetActiveScene().name == "NormalModePlay" || SceneManager.GetActiveScene().name == "HardModePlay")
     {
       myRigidbody2d.velocity = new Vector3(speed, speed, 0);
     }
@@ -80,7 +80,10 @@ public class BallManager : MonoBehaviour
     // タグで衝突相手を識別
     if (collision.gameObject.CompareTag("Player"))
     {
-      AudioSource.PlayClipAtPoint(PlayerColSound, transform.position, 1.0f);
+      if (OptionManager.isSePlaying == true)
+      {
+        AudioSource.PlayClipAtPoint(PlayerColSound, transform.position, 1.0f);
+      }
       // 現在のプレイヤーの位置を取得
       Vector2 playerPos = collision.transform.position;
       // ボールの位置を取得
@@ -97,7 +100,10 @@ public class BallManager : MonoBehaviour
     // サウンドを鳴らす処理のみ
     if (collision.gameObject.CompareTag("Enemy"))
     {
-      AudioSource.PlayClipAtPoint(EnemyColSound, transform.position, 1.0f);
+      if (OptionManager.isSePlaying == true)
+      {
+        AudioSource.PlayClipAtPoint(EnemyColSound, transform.position, 1.0f);
+      }
     }
   }
 }

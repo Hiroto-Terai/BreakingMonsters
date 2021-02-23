@@ -7,6 +7,8 @@ public class SelectMode : MonoBehaviour
 {
   public string nextScene;
 
+  public AudioClip ButtonSound;
+
   // Start is called before the first frame update
   void Start()
   {
@@ -21,6 +23,10 @@ public class SelectMode : MonoBehaviour
 
   public void goToNextScene()
   {
-    SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
+    if (OptionManager.isSePlaying == true)
+    {
+      AudioSource.PlayClipAtPoint(ButtonSound, GameObject.Find("Main Camera").transform.position);
+    }
+    FadeManager.Instance.LoadScene(nextScene, 0.3f);
   }
 }

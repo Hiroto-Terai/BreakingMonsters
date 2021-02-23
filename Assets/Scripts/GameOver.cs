@@ -13,7 +13,6 @@ public class GameOver : MonoBehaviour
   bool isGameOver = false;
   // BGMを持っているオブジェクト
   public GameObject Music;
-  private Transform MusicTransform;
   // ゲームオーバーサウンド
   // update関数内で一回だけ呼び出すためのフラグを用意
   public AudioClip GameOverSound;
@@ -23,7 +22,6 @@ public class GameOver : MonoBehaviour
   void Start()
   {
     myTransform = this.transform;
-    MusicTransform = Music.GetComponent<Transform>();
     // update関数内で一回だけ呼び出すためのフラグを初期化
     isCalledOnce = false;
   }
@@ -34,12 +32,15 @@ public class GameOver : MonoBehaviour
     if (myTransform.childCount == 0)
     {
       gameOverText.text = "Game Over...";
-      MusicTransform.GetChild(0).gameObject.SetActive(false);
+      Music.SetActive(false);
       // ゲームクリアのSEを鳴らす
       if (!isCalledOnce)
       {
         isCalledOnce = true;
-        AudioSource.PlayClipAtPoint(GameOverSound, transform.position);
+        if (OptionManager.isSePlaying == true)
+        {
+          AudioSource.PlayClipAtPoint(GameOverSound, transform.position);
+        }
       }
       Time.timeScale = 0f;
       isGameOver = true;
@@ -54,7 +55,7 @@ public class GameOver : MonoBehaviour
         if (touch.phase == TouchPhase.Began)
         {
           Time.timeScale = 1;
-          SceneManager.LoadScene("EasyModePlay");
+          FadeManager.Instance.LoadScene("EasyModePlay", 0.3f);
         }
       }
     }
