@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EnemyBarManager : MonoBehaviour
 {
@@ -20,21 +21,44 @@ public class EnemyBarManager : MonoBehaviour
   void Update()
   {
     {
-      // ボールが右向きに動いている時
-      if (ballrb.velocity.x > 0)
+      if (SceneManager.GetActiveScene().name != "HardModePlay")
       {
-        // 敵のバーも右向きに動く
-        if (this.transform.position.x < 1.8)
+        // ボールが右向きに動いている時
+        if (ballrb.velocity.x > 0)
         {
-          this.transform.position += Vector3.right * Time.deltaTime * speed;
+          // 敵のバーも右向きに動く
+          if (this.transform.position.x < 1.8)
+          {
+            this.transform.position += Vector3.right * Time.deltaTime * speed;
+          }
+        }
+        // ボールが左向きに動いている時
+        else if (ballrb.velocity.x < 0)
+        {
+          if (this.transform.position.x > -1.8)
+          {
+            this.transform.position += Vector3.left * Time.deltaTime * speed;
+          }
         }
       }
-      // ボールが左向きに動いている時
-      else if (ballrb.velocity.x < 0)
+      else if (SceneManager.GetActiveScene().name == "HardModePlay")
       {
-        if (this.transform.position.x > -1.8)
+        // ボールが右向きに動いている時
+        if (ballrb.velocity.x > 0)
         {
-          this.transform.position += Vector3.left * Time.deltaTime * speed;
+          // 敵のバーも右向きに動く
+          if (this.transform.position.x < 1.2)
+          {
+            this.transform.position += Vector3.right * Time.deltaTime * speed;
+          }
+        }
+        // ボールが左向きに動いている時
+        else if (ballrb.velocity.x < 0)
+        {
+          if (this.transform.position.x > -1.2)
+          {
+            this.transform.position += Vector3.left * Time.deltaTime * speed;
+          }
         }
       }
     }

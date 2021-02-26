@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BallManager : MonoBehaviour
 {
@@ -12,12 +13,17 @@ public class BallManager : MonoBehaviour
   public float maxSpeed = 10f;
   Rigidbody2D myRigidbody2d;
   Transform myTransform;
+  public AudioClip PlayerColSound;
+  public AudioClip EnemyColSound;
 
   // Start is called before the first frame update
   void Start()
   {
     myRigidbody2d = GetComponent<Rigidbody2D>();
-    myRigidbody2d.velocity = new Vector3(speed, speed, 0);
+    if (SceneManager.GetActiveScene().name == "EasyModePlay" || SceneManager.GetActiveScene().name == "NormalModePlay" || SceneManager.GetActiveScene().name == "HardModePlay")
+    {
+      myRigidbody2d.velocity = new Vector3(speed, speed, 0);
+    }
     // 現在地を取得
     myTransform = transform;
   }
@@ -74,6 +80,10 @@ public class BallManager : MonoBehaviour
     // タグで衝突相手を識別
     if (collision.gameObject.CompareTag("Player"))
     {
+      if (OptionManager.isSePlaying == true)
+      {
+        AudioSource.PlayClipAtPoint(PlayerColSound, transform.position, 1.0f);
+      }
       // 現在のプレイヤーの位置を取得
       Vector2 playerPos = collision.transform.position;
       // ボールの位置を取得
@@ -84,6 +94,16 @@ public class BallManager : MonoBehaviour
       float speed = myRigidbody2d.velocity.magnitude;
       // 速度を変更
       myRigidbody2d.velocity = direction * speed;
+    }
+
+    // 敵プレイヤーに当たった時
+    // サウンドを鳴らす処理のみ
+    if (collision.gameObject.CompareTag("Enemy"))
+    {
+      if (OptionManager.isSePlaying == true)
+      {
+        AudioSource.PlayClipAtPoint(EnemyColSound, transform.position, 1.0f);
+      }
     }
   }
 }

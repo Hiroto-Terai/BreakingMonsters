@@ -4,22 +4,26 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
+  public AudioClip BallColSound;
 
+  // Start is called before the first frame update
+  void Start()
+  {
 
-    // Start is called before the first frame update
-    void Start()
+  }
+
+  // Update is called once per frame
+  void Update()
+  {
+
+  }
+
+  private void OnCollisionEnter2D(Collision2D collision)
+  {
+    if (OptionManager.isSePlaying == true)
     {
-        
+      AudioSource.PlayClipAtPoint(BallColSound, transform.position);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        Destroy(this.gameObject);
-    }
+    Destroy(this.gameObject);
+  }
 }
