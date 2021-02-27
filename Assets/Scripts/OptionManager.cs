@@ -27,7 +27,7 @@ public class OptionManager : MonoBehaviour
   // Start is called before the first frame update
   void Start()
   {
-    TwitterURL = "https://twitter.com/UVER_Hroxas";
+    TwitterURL = "https://twitter.com/hirot_gamedev";
     PrivacyPolicyURL = "https://hiroto-terai.github.io/BreakingMonsters/";
     Music = GameObject.Find("Music");
 

@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameClearText: {fileID: 554187902}
-  Music: {fileID: 0}
+  Music: {fileID: 1700501779}
   GameClearSound: {fileID: 8300000, guid: e0db3e7601abd4661987d280c455de3c, type: 3}
   loadSceneCanvas: {fileID: 1435974713}
 --- !u!1 &459034150
@@ -220,7 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameOverText: {fileID: 1239383649}
-  Music: {fileID: 0}
+  Music: {fileID: 1700501779}
   GameOverSound: {fileID: 8300000, guid: e7305c5fb15d1445ea853eec9b1e395f, type: 3}
   reloadScene: NormalModePlay
   loadSceneCanvas: {fileID: 1435974713}
