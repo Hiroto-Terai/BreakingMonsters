@@ -1642,7 +1642,7 @@ PrefabInstance:
     - target: {fileID: 5617093375550155994, guid: 5e07b75dde33e40a6bbf2b2cfa2dff2f,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.5
+      value: 1.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e07b75dde33e40a6bbf2b2cfa2dff2f, type: 3}
@@ -2037,6 +2037,8 @@ MonoBehaviour:
   maxSpeed: 10
   PlayerColSound: {fileID: 8300000, guid: 7eaf0020508a4429da1b0fd8b80dfc6c, type: 3}
   EnemyColSound: {fileID: 8300000, guid: 7eaf0020508a4429da1b0fd8b80dfc6c, type: 3}
+  span: 2
+  alpha: 0
 --- !u!50 &1172171255
 Rigidbody2D:
   serializedVersion: 4
