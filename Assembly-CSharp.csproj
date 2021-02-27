@@ -59,6 +59,7 @@
      <Compile Include="Assets\FadeManager\Scripts\FadeManager.cs" />
      <Compile Include="Assets\Scripts\BallManager.cs" />
      <Compile Include="Assets\Scripts\CameraSizeUpdater.cs" />
+     <Compile Include="Assets\Scripts\CountDown.cs" />
      <Compile Include="Assets\Scripts\EnemyBarManager.cs" />
      <Compile Include="Assets\Scripts\EnemyManager.cs" />
      <Compile Include="Assets\Scripts\GameClear.cs" />

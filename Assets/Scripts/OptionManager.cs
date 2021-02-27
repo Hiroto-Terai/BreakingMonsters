@@ -28,7 +28,6 @@ public class OptionManager : MonoBehaviour
   void Start()
   {
     TwitterURL = "https://twitter.com/UVER_Hroxas";
-    InstagramURL = "https://www.instagram.com/?hl=ja";
     PrivacyPolicyURL = "https://hiroto-terai.github.io/BreakingMonsters/";
     Music = GameObject.Find("Music");
 
@@ -77,13 +76,6 @@ public class OptionManager : MonoBehaviour
   {
     playButtonSound();
     Application.OpenURL(TwitterURL);
-  }
-
-  //インスタを開く
-  public void openInstagram()
-  {
-    playButtonSound();
-    Application.OpenURL(InstagramURL);
   }
 
   public void openPrivacyPolicy()

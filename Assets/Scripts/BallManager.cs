@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class BallManager : MonoBehaviour
@@ -15,22 +16,33 @@ public class BallManager : MonoBehaviour
   Transform myTransform;
   public AudioClip PlayerColSound;
   public AudioClip EnemyColSound;
+  bool isCalledOnce;
 
   // Start is called before the first frame update
   void Start()
   {
     myRigidbody2d = GetComponent<Rigidbody2D>();
-    if (SceneManager.GetActiveScene().name == "EasyModePlay" || SceneManager.GetActiveScene().name == "NormalModePlay" || SceneManager.GetActiveScene().name == "HardModePlay")
-    {
-      myRigidbody2d.velocity = new Vector3(speed, speed, 0);
-    }
     // 現在地を取得
     myTransform = transform;
+    isCalledOnce = false;
   }
 
   // Update is called once per frame
   void Update()
   {
+    if (SceneManager.GetActiveScene().name == "EasyModePlay" || SceneManager.GetActiveScene().name == "NormalModePlay" || SceneManager.GetActiveScene().name == "HardModePlay")
+    {
+      // カウントダウン中はボールを放たない
+      if (GameObject.Find("CountText").GetComponent<Text>().text == "")
+      {
+        if (!isCalledOnce)
+        {
+          isCalledOnce = true;
+          myRigidbody2d.velocity = new Vector3(speed, speed, 0);
+        }
+      }
+    }
+
     // 速度チェック
     Vector2 velocity = myRigidbody2d.velocity;
     // 速さを計算
