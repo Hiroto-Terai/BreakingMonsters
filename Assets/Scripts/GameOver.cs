@@ -17,6 +17,7 @@ public class GameOver : MonoBehaviour
   // update関数内で一回だけ呼び出すためのフラグを用意
   public AudioClip GameOverSound;
   bool isCalledOnce;
+  public string reloadScene;
 
   // Start is called before the first frame update
   void Start()
@@ -44,19 +45,10 @@ public class GameOver : MonoBehaviour
       }
       Time.timeScale = 0f;
       isGameOver = true;
-    }
-
-    if (isGameOver == true)
-    {
-      if (Input.touchCount > 0)
+      if (isGameOver == true && Input.GetMouseButtonDown(0))
       {
-        Touch touch = Input.GetTouch(0);
-
-        if (touch.phase == TouchPhase.Began)
-        {
-          Time.timeScale = 1;
-          FadeManager.Instance.LoadScene("EasyModePlay", 0.3f);
-        }
+        Time.timeScale = 1;
+        FadeManager.Instance.LoadScene(reloadScene, 0.3f);
       }
     }
   }

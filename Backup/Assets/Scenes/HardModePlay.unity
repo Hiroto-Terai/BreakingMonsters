@@ -276,7 +276,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 337499826}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1211640742}
@@ -302,6 +302,7 @@ MonoBehaviour:
   gameClearText: {fileID: 554187902}
   Music: {fileID: 0}
   GameClearSound: {fileID: 8300000, guid: e0db3e7601abd4661987d280c455de3c, type: 3}
+  reloadScene: HardModePlay
 --- !u!1001 &351372493
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -412,6 +413,7 @@ MonoBehaviour:
   gameOverText: {fileID: 1239383649}
   Music: {fileID: 0}
   GameOverSound: {fileID: 8300000, guid: e7305c5fb15d1445ea853eec9b1e395f, type: 3}
+  reloadScene: HardModePlay
 --- !u!1001 &475216650
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1164,7 +1166,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 581073178}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 8.6, z: 0}
+  m_LocalPosition: {x: 0, y: 7.8, z: 0}
   m_LocalScale: {x: 91.5, y: 25, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1475,7 +1477,7 @@ PrefabInstance:
     - target: {fileID: 5617093375550155994, guid: 5e07b75dde33e40a6bbf2b2cfa2dff2f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3
+      value: 2.2
       objectReference: {fileID: 0}
     - target: {fileID: 5617093375550155994, guid: 5e07b75dde33e40a6bbf2b2cfa2dff2f,
         type: 3}
@@ -2131,6 +2133,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1215801777066600009, guid: 756479f7a93234ba4a7caddd884988a1,
+        type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1359804669}
+    - target: {fileID: 1215801777066600009, guid: 756479f7a93234ba4a7caddd884988a1,
+        type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Retry
+      objectReference: {fileID: 0}
     - target: {fileID: 1215801777361369860, guid: 756479f7a93234ba4a7caddd884988a1,
         type: 3}
       propertyPath: m_Name
@@ -2249,6 +2261,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1359804667}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1359804669 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1215801777066600054, guid: 756479f7a93234ba4a7caddd884988a1,
+    type: 3}
+  m_PrefabInstance: {fileID: 1359804667}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7464f485cfcef48c2a8738ee2e993374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1431490429
 GameObject:
   m_ObjectHideFlags: 0

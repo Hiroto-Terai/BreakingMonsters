@@ -15,6 +15,7 @@ public class GameClear : MonoBehaviour
   // update関数内で一回だけ呼び出すためのフラグを用意
   public AudioClip GameClearSound;
   bool isCalledOnce;
+  public string reloadScene;
 
   // Start is called before the first frame update
   void Start()
@@ -27,6 +28,7 @@ public class GameClear : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
+
     if (myTransform.childCount == 0)
     {
       gameClearText.text = "Game Clear!!";
@@ -41,21 +43,12 @@ public class GameClear : MonoBehaviour
           AudioSource.PlayClipAtPoint(GameClearSound, transform.position);
         }
       }
-      Time.timeScale = 0f;
+      GameObject.Find("Ball").GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
       isGameClear = true;
-    }
-
-    if (isGameClear == true)
-    {
-      if (Input.touchCount > 0)
+      if (isGameClear == true && Input.GetMouseButtonDown(0))
       {
-        Touch touch = Input.GetTouch(0);
-
-        if (touch.phase == TouchPhase.Began)
-        {
-          Time.timeScale = 1;
-          FadeManager.Instance.LoadScene("EasyModePlay", 0.3f);
-        }
+        Time.timeScale = 1;
+        FadeManager.Instance.LoadScene(reloadScene, 0.3f);
       }
     }
   }
