@@ -64,23 +64,8 @@ public class BallManager : MonoBehaviour
             currentTime = 0f;
           }
         }
-
-        // // ボールが見えていたら(透明じゃなかったら)
-        // if (isExist == true)
-        // {
-        //   spriteRenderer.color = new Color(255, 255, 255, 0);
-        //   isExist = false;
-        //   currentTime = 0f;
-        // }
-        // // ボールが見えなくなっていたら(透明で存在していなかったら)
-        // else if (isExist == false)
-        // {
-        //   spriteRenderer.color = new Color(255, 255, 255, 255);
-        //   isExist = true;
-        //   currentTime = 0f;
       }
     }
-
 
     if (SceneManager.GetActiveScene().name == "EasyModePlay" || SceneManager.GetActiveScene().name == "NormalModePlay" || SceneManager.GetActiveScene().name == "HardModePlay")
     {
@@ -140,21 +125,6 @@ public class BallManager : MonoBehaviour
 
   private void OnCollisionEnter2D(Collision2D collision)
   {
-    // if (SceneManager.GetActiveScene().name == "HardModePlay")
-    // {
-    //   if ()
-    //   {
-    //     spriteRenderer.color = new Color(255, 255, 255, 0);
-    //     isExist = false;
-    //   }
-    //   else if (isExist == false)
-    //   {
-    //     spriteRenderer.color = new Color(255, 255, 255, 255);
-    //     isExist = true;
-    //   }
-
-    // }
-
     // プレイヤーにあたった時に、跳ね返る方向を変える
     // タグで衝突相手を識別
     if (collision.gameObject.CompareTag("Player"))
