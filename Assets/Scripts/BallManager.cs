@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class BallManager : MonoBehaviour
@@ -15,22 +16,85 @@ public class BallManager : MonoBehaviour
   Transform myTransform;
   public AudioClip PlayerColSound;
   public AudioClip EnemyColSound;
+  bool isCalledOnce;
+  // ボールの色を取得(透明化のため)
+  SpriteRenderer spriteRenderer;
+  public float span;
+  private float currentTime = 0f;
+  bool isExist;
+  private float noExistTime = 0f;
+  public float alpha;
 
   // Start is called before the first frame update
   void Start()
   {
     myRigidbody2d = GetComponent<Rigidbody2D>();
-    if (SceneManager.GetActiveScene().name == "EasyModePlay" || SceneManager.GetActiveScene().name == "NormalModePlay" || SceneManager.GetActiveScene().name == "HardModePlay")
-    {
-      myRigidbody2d.velocity = new Vector3(speed, speed, 0);
-    }
     // 現在地を取得
     myTransform = transform;
+    isCalledOnce = false;
+    this.spriteRenderer = GetComponent<SpriteRenderer>();
+    isExist = true;
+    span = 5f;
+    alpha = 1.0f;
   }
 
   // Update is called once per frame
   void Update()
   {
+    // ハードモードの透明化処理
+    // currentTimeに経過した秒数を格納していく
+    if (SceneManager.GetActiveScene().name == "HardModePlay")
+    {
+      currentTime += Time.deltaTime;
+      // 経過した秒数がspan秒( spanに入っている数値 )のとき
+      if (currentTime >= span)
+      {
+        alpha -= Time.deltaTime;
+        spriteRenderer.color = new Color(255, 255, 255, alpha);
+        noExistTime += Time.deltaTime;
+        if (noExistTime >= 1.5f)
+        {
+          alpha += 0.1f;
+          Debug.Log(alpha);
+          spriteRenderer.color = new Color(255, 255, 255, alpha);
+          if (alpha >= 1.0f)
+          {
+            spriteRenderer.color = new Color(255, 255, 255, 1);
+            noExistTime = 0f;
+            currentTime = 0f;
+          }
+        }
+
+        // // ボールが見えていたら(透明じゃなかったら)
+        // if (isExist == true)
+        // {
+        //   spriteRenderer.color = new Color(255, 255, 255, 0);
+        //   isExist = false;
+        //   currentTime = 0f;
+        // }
+        // // ボールが見えなくなっていたら(透明で存在していなかったら)
+        // else if (isExist == false)
+        // {
+        //   spriteRenderer.color = new Color(255, 255, 255, 255);
+        //   isExist = true;
+        //   currentTime = 0f;
+      }
+    }
+
+
+    if (SceneManager.GetActiveScene().name == "EasyModePlay" || SceneManager.GetActiveScene().name == "NormalModePlay" || SceneManager.GetActiveScene().name == "HardModePlay")
+    {
+      // カウントダウン中はボールを放たない
+      if (GameObject.Find("CountText").GetComponent<Text>().text == "")
+      {
+        if (!isCalledOnce)
+        {
+          isCalledOnce = true;
+          myRigidbody2d.velocity = new Vector3(speed, speed, 0);
+        }
+      }
+    }
+
     // 速度チェック
     Vector2 velocity = myRigidbody2d.velocity;
     // 速さを計算
@@ -76,6 +140,21 @@ public class BallManager : MonoBehaviour
 
   private void OnCollisionEnter2D(Collision2D collision)
   {
+    // if (SceneManager.GetActiveScene().name == "HardModePlay")
+    // {
+    //   if ()
+    //   {
+    //     spriteRenderer.color = new Color(255, 255, 255, 0);
+    //     isExist = false;
+    //   }
+    //   else if (isExist == false)
+    //   {
+    //     spriteRenderer.color = new Color(255, 255, 255, 255);
+    //     isExist = true;
+    //   }
+
+    // }
+
     // プレイヤーにあたった時に、跳ね返る方向を変える
     // タグで衝突相手を識別
     if (collision.gameObject.CompareTag("Player"))

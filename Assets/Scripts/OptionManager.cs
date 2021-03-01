@@ -27,8 +27,7 @@ public class OptionManager : MonoBehaviour
   // Start is called before the first frame update
   void Start()
   {
-    TwitterURL = "https://twitter.com/UVER_Hroxas";
-    InstagramURL = "https://www.instagram.com/?hl=ja";
+    TwitterURL = "https://twitter.com/hirot_gamedev";
     PrivacyPolicyURL = "https://hiroto-terai.github.io/BreakingMonsters/";
     Music = GameObject.Find("Music");
 
@@ -77,13 +76,6 @@ public class OptionManager : MonoBehaviour
   {
     playButtonSound();
     Application.OpenURL(TwitterURL);
-  }
-
-  //インスタを開く
-  public void openInstagram()
-  {
-    playButtonSound();
-    Application.OpenURL(InstagramURL);
   }
 
   public void openPrivacyPolicy()

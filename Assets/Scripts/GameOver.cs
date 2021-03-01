@@ -19,10 +19,12 @@ public class GameOver : MonoBehaviour
   bool isCalledOnce;
   public string reloadScene;
 
+  public GameObject loadSceneCanvas;
+
   // Start is called before the first frame update
   void Start()
   {
-    myTransform = this.transform;
+    myTransform = transform;
     // update関数内で一回だけ呼び出すためのフラグを初期化
     isCalledOnce = false;
   }
@@ -33,6 +35,7 @@ public class GameOver : MonoBehaviour
     if (myTransform.childCount == 0)
     {
       gameOverText.text = "Game Over...";
+      // BGMの停止
       Music.SetActive(false);
       // ゲームクリアのSEを鳴らす
       if (!isCalledOnce)
@@ -43,12 +46,11 @@ public class GameOver : MonoBehaviour
           AudioSource.PlayClipAtPoint(GameOverSound, transform.position);
         }
       }
-      Time.timeScale = 0f;
+      GameObject.Find("Ball").GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
       isGameOver = true;
-      if (isGameOver == true && Input.GetMouseButtonDown(0))
+      if (isGameOver == true)
       {
-        Time.timeScale = 1;
-        FadeManager.Instance.LoadScene(reloadScene, 0.3f);
+        loadSceneCanvas.SetActive(true);
       }
     }
   }
