@@ -64,7 +64,17 @@
      <Compile Include="Assets\Scripts\EnemyManager.cs" />
      <Compile Include="Assets\Scripts\GameClear.cs" />
      <Compile Include="Assets\Scripts\GameOver.cs" />
+     <Compile Include="Assets\Scripts\GoogleBannerAdsBottom.cs" />
+     <Compile Include="Assets\Scripts\GoogleBannerAdsTop.cs" />
      <Compile Include="Assets\Scripts\LoadScene.cs" />
+     <Compile Include="Assets\Scripts\ObjectFit\BallPosition.cs" />
+     <Compile Include="Assets\Scripts\ObjectFit\BottomBarPosition.cs" />
+     <Compile Include="Assets\Scripts\ObjectFit\EnemyPosition.cs" />
+     <Compile Include="Assets\Scripts\ObjectFit\EnemySlimePosition.cs" />
+     <Compile Include="Assets\Scripts\ObjectFit\PlayerPosition.cs" />
+     <Compile Include="Assets\Scripts\ObjectFit\PlayerSlimePosition.cs" />
+     <Compile Include="Assets\Scripts\ObjectFit\TopBarPosition.cs" />
+     <Compile Include="Assets\Scripts\ObjectFitDeviseSize.cs" />
      <Compile Include="Assets\Scripts\OptionManager.cs" />
      <Compile Include="Assets\Scripts\PlayerManager.cs" />
      <Compile Include="Assets\Scripts\ResetText.cs" />
