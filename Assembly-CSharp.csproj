@@ -719,6 +719,14 @@
       <Project>{D394426F-B829-FA05-CC16-94BE572495C8}</Project>
       <Name>UnityEditor.UI</Name>
     </ProjectReference>
+    <ProjectReference Include="GoogleMobileAds.csproj">
+      <Project>{3560A726-3BFD-62BA-D416-46AEC0A5EF14}</Project>
+      <Name>GoogleMobileAds</Name>
+    </ProjectReference>
+    <ProjectReference Include="GoogleMobileAds.Editor.csproj">
+      <Project>{BFB2A694-08D9-654A-506E-1BE6D604A9D0}</Project>
+      <Name>GoogleMobileAds.Editor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
