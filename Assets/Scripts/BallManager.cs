@@ -55,7 +55,6 @@ public class BallManager : MonoBehaviour
         if (noExistTime >= 1.5f)
         {
           alpha += 0.1f;
-          Debug.Log(alpha);
           spriteRenderer.color = new Color(255, 255, 255, alpha);
           if (alpha >= 1.0f)
           {

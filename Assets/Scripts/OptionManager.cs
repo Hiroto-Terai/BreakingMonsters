@@ -24,6 +24,8 @@ public class OptionManager : MonoBehaviour
   public AudioClip ButtonSound;
   private string sceneNameForRetry;
 
+  public GameObject GoogleInterStitialAds;
+
   // Start is called before the first frame update
   void Start()
   {
@@ -39,7 +41,6 @@ public class OptionManager : MonoBehaviour
     {
       Music.GetComponent<AudioSource>().volume = 0f;
     }
-    Debug.Log(isSePlaying);
   }
 
   // Update is called once per frame
@@ -89,6 +90,12 @@ public class OptionManager : MonoBehaviour
     Time.timeScale = 1f;
     playButtonSound();
     FadeManager.Instance.LoadScene("Menu", 0.3f);
+    AdsCount.adsCount += 1;
+    // 3回に1回広告表示
+    if (AdsCount.adsCount % 3 == 0)
+    {
+      GoogleInterStitialAds.SetActive(true);
+    }
   }
   public void Retry()
   {
@@ -96,6 +103,12 @@ public class OptionManager : MonoBehaviour
     playButtonSound();
     sceneNameForRetry = SceneManager.GetActiveScene().name;
     FadeManager.Instance.LoadScene(sceneNameForRetry, 0.3f);
+    AdsCount.adsCount += 1;
+    // 3回に1回広告表示
+    if (AdsCount.adsCount % 3 == 0)
+    {
+      GoogleInterStitialAds.SetActive(true);
+    }
   }
 
   public void BgmController()

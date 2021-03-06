@@ -57,6 +57,7 @@
   <ItemGroup>
      <Compile Include="Assets\FadeManager\Sample\FadeSample.cs" />
      <Compile Include="Assets\FadeManager\Scripts\FadeManager.cs" />
+     <Compile Include="Assets\Scripts\AdsCount.cs" />
      <Compile Include="Assets\Scripts\BallManager.cs" />
      <Compile Include="Assets\Scripts\CameraSizeUpdater.cs" />
      <Compile Include="Assets\Scripts\CountDown.cs" />
@@ -66,6 +67,7 @@
      <Compile Include="Assets\Scripts\GameOver.cs" />
      <Compile Include="Assets\Scripts\GoogleBannerAdsBottom.cs" />
      <Compile Include="Assets\Scripts\GoogleBannerAdsTop.cs" />
+     <Compile Include="Assets\Scripts\GoogleInterStitialAds.cs" />
      <Compile Include="Assets\Scripts\LoadScene.cs" />
      <Compile Include="Assets\Scripts\ObjectFit\BallPosition.cs" />
      <Compile Include="Assets\Scripts\ObjectFit\BottomBarPosition.cs" />

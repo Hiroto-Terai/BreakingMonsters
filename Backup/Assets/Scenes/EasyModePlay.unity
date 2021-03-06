@@ -614,6 +614,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 479349363}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &482710403 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3024142767964959613, guid: b8553c61e332e4ab8972136b92ffb098,
+    type: 3}
+  m_PrefabInstance: {fileID: 3024142769368480763}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2673,6 +2679,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1215801777361369881, guid: 756479f7a93234ba4a7caddd884988a1,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1215801777505265754, guid: 756479f7a93234ba4a7caddd884988a1,
         type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2702,6 +2713,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1424278526406707564, guid: 445b52e1eabeb464b9c7faefac1be5a8,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1424278526406707565, guid: 445b52e1eabeb464b9c7faefac1be5a8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2817,6 +2833,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1424278526815507459, guid: 445b52e1eabeb464b9c7faefac1be5a8,
+        type: 3}
+      propertyPath: GoogleInterStitialAds
+      value: 
+      objectReference: {fileID: 482710403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 445b52e1eabeb464b9c7faefac1be5a8, type: 3}
 --- !u!1001 &2504529469822613180
@@ -2888,6 +2909,85 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: beaa0df03daf84643bbab7141b1bd3bb, type: 3}
+--- !u!1001 &3024142769368480763
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3024142767964959603, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959603, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959603, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959603, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959603, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959603, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959603, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959603, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959603, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959603, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959603, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959613, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_Name
+      value: GoogleInterStitialAds
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959613, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959613, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b8553c61e332e4ab8972136b92ffb098, type: 3}
 --- !u!1001 &3725487376851753627
 PrefabInstance:
   m_ObjectHideFlags: 0

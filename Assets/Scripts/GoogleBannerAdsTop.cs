@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GoogleMobileAds.Api;
 
-public class GoogleBannerAdsBottom : MonoBehaviour
+public class GoogleBannerAdsTop : MonoBehaviour
 {
   private BannerView bannerView;
 
@@ -17,10 +17,10 @@ public class GoogleBannerAdsBottom : MonoBehaviour
   }
   private void RequestBanner()
   {
-    string adUnitId = "ca-app-pub-3940256099942544/6300978111";
+    string adUnitId = "ca-app-pub-3940256099942544/2934735716";
 
     // Create a 320x50 banner at the top of the screen.
-    this.bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Bottom);
+    this.bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Top);
 
     // Create an empty ad request.
     AdRequest request = new AdRequest.Builder().Build();
