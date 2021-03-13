@@ -12,6 +12,6 @@ public class BallPosition : MonoBehaviour
     // カメラオブジェクトを取得します
     GameObject obj = GameObject.Find("Main Camera");
     _mainCamera = obj.GetComponent<Camera>();
-    this.transform.position = _mainCamera.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height * 1.7f / 8, 10f));
+    this.transform.position = _mainCamera.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height * 1.9f / 8, 10f));
   }
 }

@@ -334,8 +334,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: GoogleInterStitialAds
       objectReference: {fileID: 0}
+    - target: {fileID: 3024142767964959613, guid: b8553c61e332e4ab8972136b92ffb098,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8553c61e332e4ab8972136b92ffb098, type: 3}
+--- !u!1 &41094307 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3024142767964959613, guid: b8553c61e332e4ab8972136b92ffb098,
+    type: 3}
+  m_PrefabInstance: {fileID: 41094306}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &337499826
 GameObject:
   m_ObjectHideFlags: 0
@@ -1883,6 +1894,16 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1424278526675058179, guid: 445b52e1eabeb464b9c7faefac1be5a8,
+        type: 3}
+      propertyPath: GoogleInterStitialAds
+      value: 
+      objectReference: {fileID: 41094307}
+    - target: {fileID: 1424278526815507459, guid: 445b52e1eabeb464b9c7faefac1be5a8,
+        type: 3}
+      propertyPath: GoogleInterStitialAds
+      value: 
+      objectReference: {fileID: 41094307}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 445b52e1eabeb464b9c7faefac1be5a8, type: 3}
 --- !u!1001 &1038866183
@@ -2522,6 +2543,11 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: Retry
       objectReference: {fileID: 0}
+    - target: {fileID: 1215801777066600054, guid: 756479f7a93234ba4a7caddd884988a1,
+        type: 3}
+      propertyPath: GoogleInterStitialAds
+      value: 
+      objectReference: {fileID: 41094307}
     - target: {fileID: 1215801777361369860, guid: 756479f7a93234ba4a7caddd884988a1,
         type: 3}
       propertyPath: m_Name
@@ -2642,6 +2668,11 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1215801777630678134, guid: 756479f7a93234ba4a7caddd884988a1,
+        type: 3}
+      propertyPath: GoogleInterStitialAds
+      value: 
+      objectReference: {fileID: 41094307}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 756479f7a93234ba4a7caddd884988a1, type: 3}
 --- !u!1 &1359804668 stripped

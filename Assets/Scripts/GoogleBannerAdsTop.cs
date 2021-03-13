@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using GoogleMobileAds.Api;
 
 public class GoogleBannerAdsTop : MonoBehaviour
@@ -14,10 +15,17 @@ public class GoogleBannerAdsTop : MonoBehaviour
     MobileAds.Initialize(initStatus => { });
 
     this.RequestBanner();
+    SceneManager.activeSceneChanged += OnActiveSceneChanged;
+  }
+
+  void OnActiveSceneChanged(Scene prevScene, Scene nextScene)
+  {
+    this.bannerView.Destroy();
+    Debug.Log("delete bottom ads");
   }
   private void RequestBanner()
   {
-    string adUnitId = "ca-app-pub-3940256099942544/2934735716";
+    string adUnitId = "ca-app-pub-1161341815062676/5784243718";
 
     // Create a 320x50 banner at the top of the screen.
     this.bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Top);

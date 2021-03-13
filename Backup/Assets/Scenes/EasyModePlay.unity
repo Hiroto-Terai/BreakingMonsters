@@ -2564,6 +2564,11 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: Retry
       objectReference: {fileID: 0}
+    - target: {fileID: 1215801777066600054, guid: 756479f7a93234ba4a7caddd884988a1,
+        type: 3}
+      propertyPath: GoogleInterStitialAds
+      value: 
+      objectReference: {fileID: 482710403}
     - target: {fileID: 1215801777361369860, guid: 756479f7a93234ba4a7caddd884988a1,
         type: 3}
       propertyPath: m_Name
@@ -2704,6 +2709,11 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: goToMenuScene
       objectReference: {fileID: 0}
+    - target: {fileID: 1215801777630678134, guid: 756479f7a93234ba4a7caddd884988a1,
+        type: 3}
+      propertyPath: GoogleInterStitialAds
+      value: 
+      objectReference: {fileID: 482710403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 756479f7a93234ba4a7caddd884988a1, type: 3}
 --- !u!1001 &2004053947901654444
@@ -2833,6 +2843,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1424278526675058179, guid: 445b52e1eabeb464b9c7faefac1be5a8,
+        type: 3}
+      propertyPath: GoogleInterStitialAds
+      value: 
+      objectReference: {fileID: 482710403}
     - target: {fileID: 1424278526815507459, guid: 445b52e1eabeb464b9c7faefac1be5a8,
         type: 3}
       propertyPath: GoogleInterStitialAds
