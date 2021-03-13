@@ -8,7 +8,7 @@ public class PlayerManager : MonoBehaviour
   public float speed = 5f;
   Rigidbody2D myRigidBody2d;
 
-  Transform tf;
+  Vector2 tf;
 
   private float deltaX, deltaY;
 
@@ -16,7 +16,7 @@ public class PlayerManager : MonoBehaviour
   void Start()
   {
     myRigidBody2d = GetComponent<Rigidbody2D>();
-    tf = GetComponent<Transform>();
+    tf = transform.position;
   }
 
   // Update is called once per frame
@@ -37,7 +37,6 @@ public class PlayerManager : MonoBehaviour
       }
     }
 
-
     Vector2 direction = new Vector2(0, 0);
 
     if (Input.touchCount > 0)
@@ -49,18 +48,17 @@ public class PlayerManager : MonoBehaviour
       {
         case TouchPhase.Began:
           // 画面に指が触れた時
-          this.transform.position = touchPos;
+          tf.x = touchPos.x;
           break;
         case TouchPhase.Moved:
           // 指を動かしている時
-          this.transform.position = new Vector2(transform.position.x + touchPos.x * speed, -3);
+          tf.x = this.transform.position.x + touchPos.x * speed;
           break;
       }
 
       // プレイヤーの座標の取得と移動量
       Vector2 pos = this.transform.position;
-      // pos += directions * speed * Time.deltaTime;
-      pos = new Vector2(touchPos.x, -3);
+      pos.x += touchPos.x;
 
       if (pos.x > 1.8)
       {
