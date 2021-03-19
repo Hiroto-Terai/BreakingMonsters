@@ -12,11 +12,17 @@ public class PlayerManager : MonoBehaviour
 
   private float deltaX, deltaY;
 
+  private float playerPosY;
+  private Camera _mainCamera;
+
   // Start is called before the first frame update
   void Start()
   {
     myRigidBody2d = GetComponent<Rigidbody2D>();
     tf = transform.position;
+    playerPosY = Screen.height * 1.5f / 8;
+    GameObject obj = GameObject.Find("Main Camera");
+    _mainCamera = obj.GetComponent<Camera>();
   }
 
   // Update is called once per frame
@@ -52,13 +58,13 @@ public class PlayerManager : MonoBehaviour
           break;
         case TouchPhase.Moved:
           // 指を動かしている時
-          tf.x = this.transform.position.x + touchPos.x * speed;
+          tf.x += touchPos.x * speed;
           break;
       }
 
       // プレイヤーの座標の取得と移動量
       Vector2 pos = this.transform.position;
-      pos.x += touchPos.x;
+      pos.x = touchPos.x;
 
       if (pos.x > 1.8)
       {
@@ -69,7 +75,7 @@ public class PlayerManager : MonoBehaviour
         pos.x = -1.8f;
       }
       // プレイヤーの新規位置とする
-      transform.position = pos;
+      this.transform.position = pos;
     }
   }
 }

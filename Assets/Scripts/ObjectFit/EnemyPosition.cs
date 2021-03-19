@@ -12,6 +12,15 @@ public class EnemyPosition : MonoBehaviour
     // カメラオブジェクトを取得します
     GameObject obj = GameObject.Find("Main Camera");
     _mainCamera = obj.GetComponent<Camera>();
-    this.transform.position = _mainCamera.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height * 2.8f / 4, 10f));
+    // iPhone6, 6S, 7, 8, SE2などの画面サイズ対応
+    if (Screen.currentResolution.height <= 1334)
+    {
+      this.transform.position = _mainCamera.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height * 2.6f / 4, 10f));
+    }
+    else
+    {
+      this.transform.position = _mainCamera.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height * 2.5f / 4, 10f));
+    }
+
   }
 }

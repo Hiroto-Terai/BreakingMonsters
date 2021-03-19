@@ -120,6 +120,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 1215801777361369860}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  GoogleInterStitialAds: {fileID: 0}
 --- !u!1 &1215801775846508254
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,6 +319,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 1215801777361369860}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  GoogleInterStitialAds: {fileID: 0}
 --- !u!1 &1215801775973936120
 GameObject:
   m_ObjectHideFlags: 0
@@ -439,6 +441,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 1215801777361369860}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  GoogleInterStitialAds: {fileID: 0}
 --- !u!1 &1215801776030749965
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,6 +529,7 @@ GameObject:
   - component: {fileID: 1215801776180463807}
   - component: {fileID: 1215801776180463804}
   - component: {fileID: 1215801776180463805}
+  - component: {fileID: 5756701303996617298}
   m_Layer: 5
   m_Name: Close
   m_TagString: Untagged
@@ -605,6 +609,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 1215801777361369860}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  GoogleInterStitialAds: {fileID: 0}
 --- !u!114 &1215801776180463805
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -633,6 +638,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &5756701303996617298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1215801776180463803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a103bf3db4ca642938c04a89356518bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1215801776509649628
 GameObject:
   m_ObjectHideFlags: 0
@@ -1133,6 +1150,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 1215801777361369860}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  GoogleInterStitialAds: {fileID: 0}
 --- !u!1 &1215801777361369860
 GameObject:
   m_ObjectHideFlags: 0
@@ -1434,6 +1452,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 1215801777361369860}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  GoogleInterStitialAds: {fileID: 0}
 --- !u!1 &1215801777630678132
 GameObject:
   m_ObjectHideFlags: 0
@@ -1554,6 +1573,7 @@ MonoBehaviour:
   OptionCanvas: {fileID: 1215801777361369860}
   Music: {fileID: 0}
   ButtonSound: {fileID: 8300000, guid: bea19b9f723144fa9a15a5132fe0710e, type: 3}
+  GoogleInterStitialAds: {fileID: 0}
 --- !u!1 &1215801777691099421
 GameObject:
   m_ObjectHideFlags: 0

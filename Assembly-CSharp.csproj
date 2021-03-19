@@ -54,10 +54,10 @@
      <Compile Include="Assets\Scripts\ObjectFit\BottomBarPosition.cs" />
      <Compile Include="Assets\Scripts\ObjectFit\EnemyPosition.cs" />
      <Compile Include="Assets\Scripts\ObjectFit\EnemySlimePosition.cs" />
+     <Compile Include="Assets\Scripts\ObjectFit\OptionButtonPosition.cs" />
      <Compile Include="Assets\Scripts\ObjectFit\PlayerPosition.cs" />
      <Compile Include="Assets\Scripts\ObjectFit\PlayerSlimePosition.cs" />
      <Compile Include="Assets\Scripts\ObjectFit\TopBarPosition.cs" />
-     <Compile Include="Assets\Scripts\ObjectFitDeviseSize.cs" />
      <Compile Include="Assets\Scripts\OptionManager.cs" />
      <Compile Include="Assets\Scripts\PlayerManager.cs" />
      <Compile Include="Assets\Scripts\ResetText.cs" />

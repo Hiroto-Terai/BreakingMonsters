@@ -42,13 +42,6 @@ public class OptionManager : MonoBehaviour
       Music.GetComponent<AudioSource>().volume = 0f;
     }
   }
-
-  // Update is called once per frame
-  void Update()
-  {
-
-  }
-
   public void openOption()
   {
     playButtonSound();
@@ -87,28 +80,44 @@ public class OptionManager : MonoBehaviour
 
   public void goToMenuScene()
   {
+    // ならしてすぐ消す
     Time.timeScale = 1f;
     playButtonSound();
-    FadeManager.Instance.LoadScene("Menu", 0.3f);
+    Time.timeScale = 0f;
+
     AdsCount.adsCount += 1;
     // 3回に1回広告表示
     if (AdsCount.adsCount % 3 == 0)
     {
-      GoogleInterStitialAds.SetActive(true);
+      // GoogleInterStitialAds.SetActive(true);
+      GoogleInterStitialAds.GetComponent<GoogleInterStitialAds>().ShowAds();
     }
+    else
+    {
+      Time.timeScale = 1f;
+    }
+    FadeManager.Instance.LoadScene("Menu", 0.3f);
   }
   public void Retry()
   {
+    // ならしてすぐ消す
     Time.timeScale = 1f;
     playButtonSound();
-    sceneNameForRetry = SceneManager.GetActiveScene().name;
-    FadeManager.Instance.LoadScene(sceneNameForRetry, 0.3f);
+    Time.timeScale = 0f;
+
     AdsCount.adsCount += 1;
     // 3回に1回広告表示
     if (AdsCount.adsCount % 3 == 0)
     {
-      GoogleInterStitialAds.SetActive(true);
+      // GoogleInterStitialAds.SetActive(true);
+      GoogleInterStitialAds.GetComponent<GoogleInterStitialAds>().ShowAds();
     }
+    else
+    {
+      Time.timeScale = 1f;
+    }
+    sceneNameForRetry = SceneManager.GetActiveScene().name;
+    FadeManager.Instance.LoadScene(sceneNameForRetry, 0.3f);
   }
 
   public void BgmController()
