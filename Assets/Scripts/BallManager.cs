@@ -1,8 +1,6 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class BallManager : MonoBehaviour
 {
@@ -13,21 +11,19 @@ public class BallManager : MonoBehaviour
   // 速さの最大値を指定する変数を追加
   public float maxSpeed = 10f;
   Rigidbody2D myRigidbody2d;
-  Transform myTransform;
   public AudioClip PlayerColSound;
   public AudioClip EnemyColSound;
-  bool isCalledOnce;
   // ボールの色を取得(透明化のため)
   SpriteRenderer spriteRenderer;
-  TrailRenderer trail;
-  CountDown countDown;
-  bool isHardMode;
 
-  // ハードモードの透明化のタイミング
+  // ハードステージでは一定時間ごとにボールが消えて、また現れる
+  public bool IsFading { get; set; }
   const float VisibleSeconds = 5f;
   const float FadeOutSeconds = 1f;
   const float HiddenSeconds = 0.5f;
   const float FadeInSeconds = 0.3f;
+  // 透明度をなめらかにせず段階的に変えて、ドットゲームらしい見た目にする
+  const int FadeSteps = 4;
   float fadeCycleTime = 0f;
 
   // 水平に近すぎる角度(ラリーが長引く)や垂直に近すぎる角度(同じ所を往復する)を避ける
@@ -36,57 +32,35 @@ public class BallManager : MonoBehaviour
   // プレイヤーで打ち返すたびに少しずつ速くする
   const float SpeedUpPerPaddleHit = 1.04f;
 
-  const float TrailSeconds = 0.15f;
-  const float TrailWidth = 0.12f;
+  // 残像（ドットの影を少し残す）
+  const float AfterimageInterval = 0.04f;
+  float afterimageTimer;
 
-  // Start is called before the first frame update
-  void Start()
+  void Awake()
   {
     myRigidbody2d = GetComponent<Rigidbody2D>();
-    // 現在地を取得
-    myTransform = transform;
-    isCalledOnce = false;
     this.spriteRenderer = GetComponent<SpriteRenderer>();
-    string sceneName = SceneManager.GetActiveScene().name;
-    isHardMode = sceneName == "HardModePlay";
-    countDown = FindFirstObjectByType<CountDown>();
-    if (countDown != null)
-    {
-      AddTrail();
-    }
   }
 
-  void AddTrail()
+  public bool IsMoving => myRigidbody2d.linearVelocity != Vector2.zero;
+
+  // 指定した向きに、最初の速さで打ち出す
+  public void Launch(Vector2 direction)
   {
-    trail = gameObject.AddComponent<TrailRenderer>();
-    trail.time = TrailSeconds;
-    trail.startWidth = TrailWidth;
-    trail.endWidth = 0f;
-    trail.material = new Material(Shader.Find("Sprites/Default"));
-    trail.sortingOrder = spriteRenderer.sortingOrder - 1;
-    SetTrailAlpha(1f);
+    // 元の作りでは (speed, speed) で打ち出していたので、その速さにそろえる
+    float launchSpeed = speed * Mathf.Sqrt(2f);
+    myRigidbody2d.linearVelocity = ClampDirection(direction) * launchSpeed;
   }
 
-  void SetTrailAlpha(float alpha)
+  public void Stop()
   {
-    trail.startColor = new Color(0.55f, 0.85f, 1f, 0.5f * alpha);
-    trail.endColor = new Color(0.55f, 0.85f, 1f, 0f);
+    myRigidbody2d.linearVelocity = Vector2.zero;
   }
 
   // Update is called once per frame
   void Update()
   {
-    if (isHardMode)
-    {
-      UpdateHardModeFade();
-    }
-
-    // カウントダウン中はボールを放たない
-    if (countDown != null && countDown.IsFinished && !isCalledOnce)
-    {
-      isCalledOnce = true;
-      myRigidbody2d.linearVelocity = new Vector3(speed, speed, 0);
-    }
+    UpdateFade();
 
     // 速度チェック
     Vector2 velocity = myRigidbody2d.linearVelocity;
@@ -98,11 +72,23 @@ public class BallManager : MonoBehaviour
     float clampedSpeed = Mathf.Clamp(velocity.magnitude, minSpeed, maxSpeed);
     // 移動する方向を一定の角度の範囲に制限する
     myRigidbody2d.linearVelocity = ClampDirection(velocity) * clampedSpeed;
+
+    afterimageTimer -= Time.deltaTime;
+    if (afterimageTimer <= 0f && spriteRenderer.color.a > 0f)
+    {
+      afterimageTimer = AfterimageInterval;
+      HitEffects.Afterimage(spriteRenderer, transform.position);
+    }
   }
 
-  // ハードモードでは一定時間ごとにボールが消えて、また現れる
-  void UpdateHardModeFade()
+  void UpdateFade()
   {
+    if (!IsFading)
+    {
+      fadeCycleTime = 0f;
+      spriteRenderer.color = Color.white;
+      return;
+    }
     fadeCycleTime += Time.deltaTime;
     float t = fadeCycleTime - VisibleSeconds;
     float alpha;
@@ -127,11 +113,8 @@ public class BallManager : MonoBehaviour
       alpha = 1f;
       fadeCycleTime = 0f;
     }
+    alpha = Mathf.Round(alpha * FadeSteps) / FadeSteps;
     spriteRenderer.color = new Color(1f, 1f, 1f, alpha);
-    if (trail != null)
-    {
-      SetTrailAlpha(alpha);
-    }
   }
 
   Vector2 ClampDirection(Vector2 velocity)
@@ -153,23 +136,19 @@ public class BallManager : MonoBehaviour
       {
         AudioSource.PlayClipAtPoint(PlayerColSound, transform.position, 1.0f);
       }
-      // 現在のプレイヤーの位置を取得
-      Vector2 playerPos = collision.transform.position;
-      // ボールの位置を取得
-      Vector2 ballPos = myTransform.position;
       // プレイヤーから見たボールの方向を計算
-      Vector2 direction = (ballPos - playerPos).normalized;
+      Vector2 direction = ((Vector2)transform.position - (Vector2)collision.transform.position).normalized;
       // 現在のボールの速さを取得して少し速くする
-      float speed = Mathf.Min(myRigidbody2d.linearVelocity.magnitude * SpeedUpPerPaddleHit, maxSpeed);
+      float newSpeed = Mathf.Min(myRigidbody2d.linearVelocity.magnitude * SpeedUpPerPaddleHit, maxSpeed);
       // 速度を変更
-      myRigidbody2d.linearVelocity = direction * speed;
-      if (GameSession.Instance != null)
+      myRigidbody2d.linearVelocity = direction * newSpeed;
+      if (StageRunController.Instance != null)
       {
-        GameSession.Instance.OnPaddleHit();
+        StageRunController.Instance.OnPaddleHit();
       }
     }
 
-    // 敵プレイヤーに当たった時
+    // 敵のバーに当たった時
     // サウンドを鳴らす処理のみ
     if (collision.gameObject.CompareTag("Enemy"))
     {

@@ -1,18 +1,22 @@
 using System.Collections;
 using UnityEngine;
 
-// 当たったときの演出（破片が飛び散る・画面の揺れ・振動）
+// 当たったときの演出（ドットの破片・画面の揺れ・残像・振動）。動きはすべてドットの格子にそろえる
 public class HitEffects : MonoBehaviour
 {
   const int BurstPieceCount = 10;
-  const float BurstPieceSize = 0.12f;
+  // 破片は2x2ドットの四角
+  const float BurstPieceDots = 2f;
   const float BurstSpeed = 3f;
   const float BurstSeconds = 0.4f;
+  // 色の薄れ方も段階的にする
+  const int FadeSteps = 3;
   const float ShakeSeconds = 0.25f;
-  const float ShakeStrength = 0.12f;
+  const int ShakeMaxDots = 3;
+  const float AfterimageSeconds = 0.12f;
+  const float AfterimageAlpha = 0.45f;
 
   static HitEffects runner;
-  static Sprite pieceSprite;
 
   // コルーチンを動かすための入れ物を、必要になったときにシーンへ1つだけ作る
   static HitEffects Runner
@@ -27,16 +31,9 @@ public class HitEffects : MonoBehaviour
     }
   }
 
-  static Sprite PieceSprite
+  static float SteppedFade(float progress)
   {
-    get
-    {
-      if (pieceSprite == null)
-      {
-        pieceSprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0.5f), 4f);
-      }
-      return pieceSprite;
-    }
+    return 1f - Mathf.Floor(progress * FadeSteps) / FadeSteps;
   }
 
   public static void Burst(Vector3 position, Color color)
@@ -52,20 +49,45 @@ public class HitEffects : MonoBehaviour
   static IEnumerator MovePiece(Vector3 position, Vector3 velocity, Color color)
   {
     var piece = new GameObject("BurstPiece");
-    piece.transform.position = position;
-    piece.transform.localScale = Vector3.one * BurstPieceSize;
+    piece.transform.localScale = Vector3.one * BurstPieceDots;
     var spriteRenderer = piece.AddComponent<SpriteRenderer>();
-    spriteRenderer.sprite = PieceSprite;
+    spriteRenderer.sprite = PixelArt.WorldSprite("dot");
     spriteRenderer.sortingOrder = 10;
     float time = 0f;
     while (time < BurstSeconds)
     {
       time += Time.deltaTime;
-      piece.transform.position += velocity * Time.deltaTime;
-      spriteRenderer.color = new Color(color.r, color.g, color.b, 1f - time / BurstSeconds);
+      position += velocity * Time.deltaTime;
+      piece.transform.position = PixelArt.Snap(position);
+      spriteRenderer.color = new Color(color.r, color.g, color.b, SteppedFade(time / BurstSeconds));
       yield return null;
     }
     Destroy(piece);
+  }
+
+  // ボールの通った跡に、薄いコピーを少しだけ残す
+  public static void Afterimage(SpriteRenderer source, Vector3 position)
+  {
+    Runner.StartCoroutine(ShowAfterimage(source, position));
+  }
+
+  static IEnumerator ShowAfterimage(SpriteRenderer source, Vector3 position)
+  {
+    var ghost = new GameObject("Afterimage");
+    ghost.transform.position = PixelArt.Snap(position);
+    ghost.transform.localScale = source.transform.lossyScale;
+    var spriteRenderer = ghost.AddComponent<SpriteRenderer>();
+    spriteRenderer.sprite = source.sprite;
+    spriteRenderer.sortingOrder = source.sortingOrder - 1;
+    float baseAlpha = AfterimageAlpha * source.color.a;
+    float time = 0f;
+    while (time < AfterimageSeconds)
+    {
+      time += Time.deltaTime;
+      spriteRenderer.color = new Color(0.55f, 0.85f, 1f, baseAlpha * SteppedFade(time / AfterimageSeconds));
+      yield return null;
+    }
+    Destroy(ghost);
   }
 
   public static void Shake()
@@ -80,8 +102,9 @@ public class HitEffects : MonoBehaviour
     while (time < ShakeSeconds)
     {
       time += Time.deltaTime;
-      float strength = ShakeStrength * (1f - time / ShakeSeconds);
-      cameraTransform.position = origin + (Vector3)(Random.insideUnitCircle * strength);
+      int dots = Mathf.CeilToInt(ShakeMaxDots * (1f - time / ShakeSeconds));
+      Vector3 offset = new Vector3(Random.Range(-dots, dots + 1), Random.Range(-dots, dots + 1), 0f) * PixelArt.WorldPixelSize;
+      cameraTransform.position = origin + offset;
       yield return null;
     }
     cameraTransform.position = origin;

@@ -18,7 +18,15 @@ public class CountDown : MonoBehaviour
   // Start is called before the first frame update
   void Start()
   {
+    Restart();
+  }
+
+  // 3, 2, 1, GO! を最初からやり直す（階層が変わるたびに使う）
+  public void Restart()
+  {
     countdown = 4f;
+    goTimer = 0f;
+    IsFinished = false;
   }
 
   // Update is called once per frame

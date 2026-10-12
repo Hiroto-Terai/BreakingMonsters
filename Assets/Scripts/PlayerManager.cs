@@ -7,8 +7,8 @@ public class PlayerManager : MonoBehaviour
 {
   // プレイヤーの移動の速さ
   public float speed = 5f;
-  // 画面の端からはみ出さない範囲
-  const float LimitX = 1.8f;
+  // 画面の端からはみ出さない範囲（バーの幅が変わると変える）
+  public float LimitX = 1.8f;
   // 一時停止ボタンなどUIの上から始まったタッチではプレイヤーを動かさない
   bool isTouchOnUi;
 
