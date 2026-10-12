@@ -8,46 +8,34 @@ public class GameClear : MonoBehaviour
 {
   public Text gameClearText;
   Transform myTransform;
-  bool isGameClear = false;
   // BGMを持っているオブジェクト
   public GameObject Music;
   // ゲームクリアサウンド
-  // update関数内で一回だけ呼び出すためのフラグを用意
   public AudioClip GameClearSound;
-  bool isCalledOnce;
   public GameObject loadSceneCanvas;
 
   // Start is called before the first frame update
   void Start()
   {
     myTransform = transform;
-    // update関数内で一回だけ呼び出すためのフラグを初期化
-    isCalledOnce = false;
   }
 
   // Update is called once per frame
   void Update()
   {
-    if (myTransform.childCount == 0)
+    // 敵スライムが全部いなくなったらクリア（ゲームオーバーと同時なら先に判定した方だけ）
+    if (myTransform.childCount == 0 && GameSession.Instance.TryEnd(true))
     {
       gameClearText.text = "Game Clear!!";
       // BGMの停止
       Music.SetActive(false);
       // ゲームクリアのSEを鳴らす
-      if (!isCalledOnce)
+      if (OptionManager.isSePlaying == true)
       {
-        isCalledOnce = true;
-        if (OptionManager.isSePlaying == true)
-        {
-          AudioSource.PlayClipAtPoint(GameClearSound, transform.position);
-        }
+        AudioSource.PlayClipAtPoint(GameClearSound, transform.position);
       }
       GameObject.Find("Ball").GetComponent<Rigidbody2D>().linearVelocity = new Vector3(0, 0, 0);
-      isGameClear = true;
-      if (isGameClear == true)
-      {
-        loadSceneCanvas.SetActive(true);
-      }
+      loadSceneCanvas.SetActive(true);
     }
   }
 }

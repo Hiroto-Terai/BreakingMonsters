@@ -18,17 +18,28 @@ public class OptionManager : MonoBehaviour
   // SEが再生されているか
   public static bool isSePlaying = true;
 
-  // ドメインリロード無効時もエディタ再生ごとに初期値から始めるため
+  const string BgmPrefsKey = "option_bgm";
+  const string SePrefsKey = "option_se";
+  const float BgmVolume = 0.15f;
+  const float FadeSeconds = 0.3f;
+
+  // アプリ起動時（エディタでは再生のたび）に保存済みの設定を読み込む
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-  static void ResetStatics()
+  static void LoadSettings()
   {
-    isBgmPlaying = true;
-    isSePlaying = true;
+    isBgmPlaying = PlayerPrefs.GetInt(BgmPrefsKey, 1) == 1;
+    isSePlaying = PlayerPrefs.GetInt(SePrefsKey, 1) == 1;
+  }
+
+  static void SaveSettings()
+  {
+    PlayerPrefs.SetInt(BgmPrefsKey, isBgmPlaying ? 1 : 0);
+    PlayerPrefs.SetInt(SePrefsKey, isSePlaying ? 1 : 0);
+    PlayerPrefs.Save();
   }
 
   public GameObject Music;
   public AudioClip ButtonSound;
-  private string sceneNameForRetry;
 
   public GameObject GoogleInterStitialAds;
 
@@ -38,15 +49,12 @@ public class OptionManager : MonoBehaviour
     TwitterURL = "https://twitter.com/hirot_gamedev";
     PrivacyPolicyURL = "https://hiroto-terai.github.io/BreakingMonsters/";
     Music = GameObject.Find("Music");
-
-    if (OptionManager.isBgmPlaying == true)
+    // 結果画面のボタンが出る時点ではBGMが止められていて見つからない
+    if (Music == null)
     {
-      Music.GetComponent<AudioSource>().volume = 0.15f;
+      return;
     }
-    else
-    {
-      Music.GetComponent<AudioSource>().volume = 0f;
-    }
+    Music.GetComponent<AudioSource>().volume = isBgmPlaying ? BgmVolume : 0f;
   }
   public void openOption()
   {
@@ -86,44 +94,29 @@ public class OptionManager : MonoBehaviour
 
   public void goToMenuScene()
   {
-    // ならしてすぐ消す
-    Time.timeScale = 1f;
-    playButtonSound();
-    Time.timeScale = 0f;
-
-    AdsCount.adsCount += 1;
-    // 3回に1回広告表示
-    if (AdsCount.adsCount % 3 == 0)
-    {
-      // GoogleInterStitialAds.SetActive(true);
-      GoogleInterStitialAds.GetComponent<GoogleInterStitialAds>().ShowAds();
-    }
-    else
-    {
-      Time.timeScale = 1f;
-    }
-    FadeManager.Instance.LoadScene("Menu", 0.3f);
+    GoToScene("Menu");
   }
+
   public void Retry()
   {
-    // ならしてすぐ消す
-    Time.timeScale = 1f;
+    GoToScene(SceneManager.GetActiveScene().name);
+  }
+
+  // 3回に1回は広告を挟んでからシーンを切り替える
+  public void GoToScene(string sceneName)
+  {
+    // 連打で二重に遷移しないようにする
+    if (FadeManager.Instance.IsFading)
+    {
+      return;
+    }
     playButtonSound();
-    Time.timeScale = 0f;
 
     AdsCount.adsCount += 1;
-    // 3回に1回広告表示
-    if (AdsCount.adsCount % 3 == 0)
-    {
-      // GoogleInterStitialAds.SetActive(true);
-      GoogleInterStitialAds.GetComponent<GoogleInterStitialAds>().ShowAds();
-    }
-    else
-    {
-      Time.timeScale = 1f;
-    }
-    sceneNameForRetry = SceneManager.GetActiveScene().name;
-    FadeManager.Instance.LoadScene(sceneNameForRetry, 0.3f);
+    bool isAdShown = AdsCount.adsCount % 3 == 0 && GoogleInterStitialAds.GetComponent<GoogleInterStitialAds>().ShowAds();
+    // 広告表示中は時間を止め、広告を閉じたときに再開する（広告が出せなければ止めない）
+    Time.timeScale = isAdShown ? 0f : 1f;
+    FadeManager.Instance.LoadScene(sceneName, FadeSeconds);
   }
 
   public void BgmController()
@@ -133,13 +126,15 @@ public class OptionManager : MonoBehaviour
       isBgmPlaying = false;
       playButtonSound();
       Music.GetComponent<AudioSource>().volume = 0f;
+      SaveSettings();
       this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
     }
     else
     {
       isBgmPlaying = true;
       playButtonSound();
-      Music.GetComponent<AudioSource>().volume = 0.15f;
+      Music.GetComponent<AudioSource>().volume = BgmVolume;
+      SaveSettings();
       this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
     }
   }
@@ -150,12 +145,14 @@ public class OptionManager : MonoBehaviour
     {
       isSePlaying = false;
       playButtonSound();
+      SaveSettings();
       this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
     }
     else
     {
       isSePlaying = true;
       playButtonSound();
+      SaveSettings();
       this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
     }
   }

@@ -32,17 +32,16 @@ public class GoogleInterStitialAds : MonoBehaviour
     this.interstitial.LoadAd(request);
     Debug.Log("LoadAd now");
   }
-  // public void OnGUI()
-  // {
-  //   //ShowAds();
-  // }
-  public void ShowAds()
+  // 広告を表示できたら true を返す（未ロードなら表示しない）
+  public bool ShowAds()
   {
-    if (this.interstitial.IsLoaded())
+    if (!this.interstitial.IsLoaded())
     {
-      Debug.Log("Show now");
-      this.interstitial.Show();
+      return false;
     }
+    Debug.Log("Show now");
+    this.interstitial.Show();
+    return true;
   }
   public void HandleOnAdClosed(object sender, EventArgs args)
   {

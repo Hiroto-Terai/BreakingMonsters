@@ -23,6 +23,11 @@ public class SelectMode : MonoBehaviour
 
   public void goToNextScene()
   {
+    // 連打で効果音や遷移が重ならないようにする
+    if (FadeManager.Instance.IsFading)
+    {
+      return;
+    }
     if (OptionManager.isSePlaying == true)
     {
       AudioSource.PlayClipAtPoint(ButtonSound, GameObject.Find("Main Camera").transform.position);

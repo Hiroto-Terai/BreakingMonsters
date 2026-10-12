@@ -9,14 +9,10 @@ public class GameOver : MonoBehaviour
   public Text gameOverText;
   // スライムを持つ親オブジェクトを取得
   Transform myTransform;
-  // ゲームオーバーの判定
-  bool isGameOver = false;
   // BGMを持っているオブジェクト
   public GameObject Music;
   // ゲームオーバーサウンド
-  // update関数内で一回だけ呼び出すためのフラグを用意
   public AudioClip GameOverSound;
-  bool isCalledOnce;
   public string reloadScene;
 
   public GameObject loadSceneCanvas;
@@ -25,33 +21,24 @@ public class GameOver : MonoBehaviour
   void Start()
   {
     myTransform = transform;
-    // update関数内で一回だけ呼び出すためのフラグを初期化
-    isCalledOnce = false;
   }
 
   // Update is called once per frame
   void Update()
   {
-    if (myTransform.childCount == 0)
+    // 味方スライムが全部いなくなったらゲームオーバー（クリアと同時なら先に判定した方だけ）
+    if (myTransform.childCount == 0 && GameSession.Instance.TryEnd(false))
     {
       gameOverText.text = "Game Over...";
       // BGMの停止
       Music.SetActive(false);
-      // ゲームクリアのSEを鳴らす
-      if (!isCalledOnce)
+      // ゲームオーバーのSEを鳴らす
+      if (OptionManager.isSePlaying == true)
       {
-        isCalledOnce = true;
-        if (OptionManager.isSePlaying == true)
-        {
-          AudioSource.PlayClipAtPoint(GameOverSound, transform.position);
-        }
+        AudioSource.PlayClipAtPoint(GameOverSound, transform.position);
       }
       GameObject.Find("Ball").GetComponent<Rigidbody2D>().linearVelocity = new Vector3(0, 0, 0);
-      isGameOver = true;
-      if (isGameOver == true)
-      {
-        loadSceneCanvas.SetActive(true);
-      }
+      loadSceneCanvas.SetActive(true);
     }
   }
 }

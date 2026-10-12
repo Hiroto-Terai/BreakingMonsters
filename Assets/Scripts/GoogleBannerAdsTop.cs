@@ -19,6 +19,12 @@ public class GoogleBannerAdsTop : MonoBehaviour
     SceneManager.activeSceneChanged += OnActiveSceneChanged;
   }
 
+  // シーンが変わるたびに古いバナーの処理が呼ばれ続けないよう、登録を解除する
+  void OnDestroy()
+  {
+    SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+  }
+
   void OnActiveSceneChanged(Scene prevScene, Scene nextScene)
   {
     this.bannerView.Destroy();
