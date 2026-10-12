@@ -301,6 +301,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 475216658}
+    - targetCorrespondingSourceObject: {fileID: 1536177700935796315, guid: 5e07b75dde33e40a6bbf2b2cfa2dff2f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 475216659}
   m_SourcePrefab: {fileID: 100100000, guid: 5e07b75dde33e40a6bbf2b2cfa2dff2f, type: 3}
 --- !u!1 &475216651 stripped
 GameObject:
@@ -368,6 +372,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   LimitX: 1.8
+  IsTopPlayer: 0
+  UsesHalfScreen: 0
 --- !u!50 &475216656
 Rigidbody2D:
   serializedVersion: 5
@@ -407,6 +413,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9a1e32cfb5b34b41bb1e2ba4097f830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &475216659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 475216651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22a4bcd101be84405b6286baa04eaec7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Paddle
+  Side: 0
+  Character: 0
+  AimStrength: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

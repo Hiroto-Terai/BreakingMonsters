@@ -102,21 +102,27 @@ public class OptionManager : MonoBehaviour
     GoToScene(SceneManager.GetActiveScene().name);
   }
 
-  // 3回に1回は広告を挟んでからシーンを切り替える
-  public void GoToScene(string sceneName)
+  // 3回に1回は広告を挟んでからシーンを切り替える。広告を出したら true を返す
+  public bool GoToScene(string sceneName)
   {
     // 連打で二重に遷移しないようにする
     if (FadeManager.Instance.IsFading)
     {
-      return;
+      return false;
     }
     playButtonSound();
 
     AdsCount.adsCount += 1;
     bool isAdShown = AdsCount.adsCount % 3 == 0 && GoogleInterStitialAds.GetComponent<GoogleInterStitialAds>().ShowAds();
+    // 広告の閉じるボタンが一時停止画面の暗幕に隠れて押せなくならないよう、一時停止画面は閉じておく
+    if (isAdShown && OptionCanvas != null)
+    {
+      OptionCanvas.SetActive(false);
+    }
     // 広告表示中は時間を止め、広告を閉じたときに再開する（広告が出せなければ止めない）
     Time.timeScale = isAdShown ? 0f : 1f;
     FadeManager.Instance.LoadScene(sceneName, FadeSeconds);
+    return isAdShown;
   }
 
   public void BgmController()

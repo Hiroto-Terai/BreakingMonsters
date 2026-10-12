@@ -13,8 +13,13 @@ public class FloorData
   public float BossShotInterval;
   public float BulletSpeed;
   public bool HasEnemyBar;
-  public float EnemyBarSpeed;
+  public AiStyle EnemyStyle;
+  // 敵のバーの強さ（0〜1）
+  public float EnemyLevel;
   public float EnemyBarLimitX;
+  // 何回打ち返すごとにモンスターが一段迫ってくるか（0なら迫らない）
+  public int AdvanceEveryHits;
+  public float AdvanceStep;
   public float BallMinSpeed;
   public float BallMaxSpeed;
   public bool IsBallFading;
@@ -25,6 +30,10 @@ public struct MonsterSpawn
   // x は横位置、y は敵の親オブジェクトからの高さ
   public Vector2 Offset;
   public int Hp;
+  public Element Element;
+  // 横に歩く速さ（0なら歩かない）と歩く幅
+  public float WalkSpeed;
+  public float WalkRange;
 }
 
 // ステージ番号から、ステージ・階層の内容を決める（100ステージを手作業で作らずに済むように）
@@ -34,6 +43,17 @@ public static class StageDatabase
   const int HardInterval = 3;
   const int BossInterval = 7;
   const int MaxMonsters = 15;
+  const float AdvanceStepY = 0.3f;
+  // 属性モンスター・歩くモンスターが出始めるステージと、出る割合の上限
+  const int ElementStartStage = 4;
+  const int WalkerStartStage = 5;
+  const float MaxSpecialRatio = 0.5f;
+  const int AdvanceStartStage = 3;
+  const int AdvanceNormalStage = 10;
+  const int SlowAdvanceEveryHits = 6;
+  const float MonsterWidth = 0.9f;
+  const float MinWalkRange = 0.2f;
+  const float MaxWalkRange = 0.8f;
 
   // 敵を置ける段（敵の親オブジェクトからの高さ）。上の段から順に埋める（3段目は敵バーより手前で、狙いやすいが数が増える）
   static readonly float[] RowOffsetY = { 0f, 0.5f, -1.25f };
@@ -72,11 +92,15 @@ public static class StageDatabase
     {
       IsBossFloor = type == StageType.Boss && floorIndex == floorCount - 1,
       BallMinSpeed = 5f + t * 1.5f,
-      BallMaxSpeed = 10f + t * 2f,
+      BallMaxSpeed = 7.5f + t * 4.5f,
       IsBallFading = isHard && stage >= 6,
       HasEnemyBar = true,
-      EnemyBarSpeed = 2.5f + t * 2.5f + (isHard ? 1f : 0f),
+      EnemyStyle = GetEnemyStyle(stage),
+      // 対戦の「つよい」ほどにはしない（ステージ100でも 0.8 くらい）
+      EnemyLevel = Mathf.Clamp01(t * 0.65f + (isHard ? 0.12f : 0f) + floorIndex * 0.01f),
       EnemyBarLimitX = isHard ? 1.4f : 1.8f,
+      AdvanceEveryHits = GetAdvanceEveryHits(stage, isHard),
+      AdvanceStep = AdvanceStepY,
     };
 
     if (floor.IsBossFloor)
@@ -92,11 +116,55 @@ public static class StageDatabase
     int count = 3 + Mathf.RoundToInt(t * 9) + floorIndex + (isHard ? 2 : 0);
     count = Mathf.Min(count, MaxMonsters);
     int maxHp = 1 + Mathf.FloorToInt(t * 3) + (isHard ? 1 : 0);
-    foreach (var position in PickPositions(count, random))
+    float elementRatio = Mathf.Clamp01((stage - ElementStartStage + 1) / 30f) * MaxSpecialRatio;
+    float walkerRatio = Mathf.Clamp01((stage - WalkerStartStage + 1) / 40f) * MaxSpecialRatio;
+    var positions = PickPositions(count, random);
+    foreach (var position in positions)
     {
-      floor.Monsters.Add(new MonsterSpawn { Offset = position, Hp = random.Next(1, maxHp + 1) });
+      var spawn = new MonsterSpawn { Offset = position, Hp = random.Next(1, maxHp + 1) };
+      if (random.NextDouble() < elementRatio)
+      {
+        spawn.Element = (Element)random.Next(1, 4);
+      }
+      float walkRange = FreeWalkRange(position, positions);
+      if (walkRange >= MinWalkRange && random.NextDouble() < walkerRatio)
+      {
+        spawn.WalkSpeed = 0.8f + (float)random.NextDouble() * 0.8f;
+        spawn.WalkRange = walkRange;
+      }
+      floor.Monsters.Add(spawn);
     }
     return floor;
+  }
+
+  // 同じ段の隣のモンスターと重ならずに歩ける幅（隣も歩くかもしれないので、すき間の半分まで）
+  static float FreeWalkRange(Vector2 position, List<Vector2> all)
+  {
+    float nearest = MaxWalkRange * 2f + MonsterWidth;
+    foreach (var other in all)
+    {
+      if (other != position && Mathf.Approximately(other.y, position.y))
+      {
+        nearest = Mathf.Min(nearest, Mathf.Abs(other.x - position.x));
+      }
+    }
+    return Mathf.Min(MaxWalkRange, (nearest - MonsterWidth) / 2f);
+  }
+
+  // 序盤は迫ってこない → ゆっくり迫る → ふつうに迫る、と少しずつ慣れてもらう
+  static int GetAdvanceEveryHits(int stage, bool isHard)
+  {
+    if (stage < AdvanceStartStage) return 0;
+    if (stage < AdvanceNormalStage) return SlowAdvanceEveryHits;
+    return isHard ? 3 : 4;
+  }
+
+  // 序盤は守るだけの相手、ハードは狙ってくる相手、それ以外は守り型とフェイント型を交互にする
+  static AiStyle GetEnemyStyle(int stage)
+  {
+    if (stage < 4) return AiStyle.Guard;
+    if (GetType(stage) == StageType.Hard) return AiStyle.Sniper;
+    return stage % 2 == 0 ? AiStyle.Trick : AiStyle.Guard;
   }
 
   // 段ごとにランダムな順番で場所を選ぶ（同じステージは毎回同じ配置になる）

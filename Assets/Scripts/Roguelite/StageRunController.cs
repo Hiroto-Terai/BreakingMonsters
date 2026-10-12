@@ -10,7 +10,7 @@ public class StageRunController : MonoBehaviour
   public GameObject enemySlimePrefab;
   public GameObject playerSlimePrefab;
 
-  enum Phase { Setup, Countdown, Playing, Choosing, Ended }
+  enum Phase { Setup, Countdown, Playing, Serving, Choosing, Ended }
 
   const float LifeSpacingX = 0.95f;
   // バーが壁にめり込まない範囲：壁の内側の端 - バーの半分の幅
@@ -20,11 +20,24 @@ public class StageRunController : MonoBehaviour
   const float ChoiceDelaySeconds = 0.6f;
   const int BossBurstCount = 4;
   const int ModalSortingOrder = 100;
+  const float BossBottomOffsetY = -2f;
+  // 防衛ライン：プレイヤーのバーより少し上。モンスターがここまで迫ると仲間が食べられる
+  const float DefenseLineAbovePaddle = 0.95f;
+  // 属性の効果
+  const float FireRadius = 1.3f;
+  const int FireDamage = 1;
+  const int ThunderDamage = 2;
+  const float IceFreezeSeconds = 2.5f;
+  // 仲間がやられてから、ボールを打ち直すまでの間
+  const float ServeDelaySeconds = 1f;
 
   Phase phase;
   int floorIndex;
   int floorCount;
   int combo;
+  int paddleHits;
+  float defenseLineY;
+  SpriteRenderer defenseLine;
   FloorData floor;
   Boss boss;
   Shield shield;
@@ -33,6 +46,7 @@ public class StageRunController : MonoBehaviour
   Transform livesRoot;
   BallManager mainBall;
   readonly List<BallManager> extraBalls = new List<BallManager>();
+  readonly List<Vector3> extraBallStarts = new List<Vector3>();
   Vector3 ballStartPosition;
   Vector3 ballBaseScale;
   CountDown countDown;
@@ -77,6 +91,8 @@ public class StageRunController : MonoBehaviour
     player = FindFirstObjectByType<PlayerManager>();
     playerBaseScale = player.transform.localScale;
     sceneChanger = FindSceneChanger();
+    defenseLineY = player.transform.position.y + DefenseLineAbovePaddle;
+    defenseLine = CreateDefenseLine(defenseLineY);
 
     hud = new StageHud(FindFirstObjectByType<OptionButtonPosition>().GetComponent<RectTransform>());
     modalCanvas = PixelUI.CreateOverlayCanvas("ModalCanvas", ModalSortingOrder);
@@ -97,11 +113,22 @@ public class StageRunController : MonoBehaviour
     return null;
   }
 
+  // 赤い点線で防衛ラインを見せる
+  static SpriteRenderer CreateDefenseLine(float y)
+  {
+    var line = new GameObject("DefenseLine").AddComponent<SpriteRenderer>();
+    line.sprite = PixelArt.WorldSprite("defense_line");
+    line.color = new Color(1f, 1f, 1f, 0.5f);
+    line.transform.position = new Vector3(0f, y, 0f);
+    return line;
+  }
+
   void StartFloor(int index)
   {
     floorIndex = index;
     floor = StageDatabase.GetFloor(RunState.Stage, floorIndex);
     combo = 0;
+    paddleHits = 0;
     ClearField();
     SpawnMonsters();
     SpawnLives();
@@ -113,9 +140,11 @@ public class StageRunController : MonoBehaviour
       shield = Shield.Create();
     }
     hud.SetStage(RunState.Stage, floorIndex, floorCount);
+    defenseLine.enabled = !floor.IsBossFloor;
     if (floor.IsBossFloor)
     {
-      boss = Boss.Create(floor);
+      // 画面の縦横比が変わっても同じ並びになるよう、敵の親オブジェクトの位置を基準にする
+      boss = Boss.Create(floor, monstersRoot.position.y + BossBottomOffsetY);
       hud.ShowBossHp(boss.Hp, boss.MaxHp);
     }
     else
@@ -149,6 +178,7 @@ public class StageRunController : MonoBehaviour
       Destroy(ball.gameObject);
     }
     extraBalls.Clear();
+    extraBallStarts.Clear();
   }
 
   void SpawnMonsters()
@@ -158,7 +188,10 @@ public class StageRunController : MonoBehaviour
       // 画面の縦横比が変わっても同じ並びになるよう、敵の親オブジェクトの位置を基準にする
       var monster = Instantiate(enemySlimePrefab, monstersRoot);
       monster.transform.position = new Vector3(spawn.Offset.x, monstersRoot.position.y + spawn.Offset.y, 0f);
-      monster.GetComponent<EnemyManager>().Configure(spawn.Hp, false);
+      var enemy = monster.GetComponent<EnemyManager>();
+      enemy.ConfigureMonster(spawn.Hp, spawn.Element, spawn.WalkSpeed, spawn.WalkRange);
+      enemy.Killed = killed => OnMonsterDefeated(killed.transform.position);
+      enemy.ReachedDefenseLine = OnMonsterReachedDefenseLine;
     }
   }
 
@@ -170,15 +203,19 @@ public class StageRunController : MonoBehaviour
       var life = Instantiate(playerSlimePrefab, livesRoot);
       float x = (i - (RunState.Lives - 1) / 2f) * LifeSpacingX;
       life.transform.position = new Vector3(x, livesRoot.position.y, 0f);
-      life.GetComponent<EnemyManager>().Configure(1, true);
+      var lifeSlime = life.GetComponent<EnemyManager>();
+      lifeSlime.ConfigureLife(PaddleSide.Bottom);
+      lifeSlime.Killed = OnLifeLost;
     }
   }
 
   void SetUpEnemyBar()
   {
     enemyBar.gameObject.SetActive(floor.HasEnemyBar);
-    enemyBar.speed = floor.EnemyBarSpeed;
-    enemyBar.limitX = floor.EnemyBarLimitX;
+    enemyBar.Configure(floor.EnemyStyle, floor.EnemyLevel, floor.EnemyBarLimitX);
+    Vector3 position = enemyBar.transform.position;
+    position.x = 0f;
+    enemyBar.transform.position = position;
   }
 
   void SetUpPaddle()
@@ -202,6 +239,7 @@ public class StageRunController : MonoBehaviour
       ball.name = "ExtraBall";
       ConfigureBall(ball, position);
       extraBalls.Add(ball);
+      extraBallStarts.Add(position);
     }
   }
 
@@ -257,13 +295,137 @@ public class StageRunController : MonoBehaviour
     return monstersRoot.childCount == 0;
   }
 
-  public void OnPaddleHit()
+  public void OnPaddleHit(Paddle paddle, bool isSmash, Vector3 position)
   {
+    if (paddle.Side != PaddleSide.Bottom || phase != Phase.Playing)
+    {
+      return;
+    }
     combo = 0;
+    if (isSmash)
+    {
+      hud.Popup("SMASH!", position, PixelArt.Yellow);
+      HitEffects.Burst(position, PixelArt.Yellow);
+    }
+    paddleHits++;
+    if (floor.AdvanceEveryHits > 0 && !floor.IsBossFloor && paddleHits % floor.AdvanceEveryHits == 0)
+    {
+      AdvanceMonsters();
+    }
+  }
+
+  // 何回か打ち返すごとに、モンスターが一段迫ってくる
+  void AdvanceMonsters()
+  {
+    foreach (var monster in monstersRoot.GetComponentsInChildren<EnemyManager>())
+    {
+      monster.Advance(floor.AdvanceStep, defenseLineY);
+    }
+  }
+
+  // 防衛ラインまで来たモンスターは、仲間スライムを1匹食べて消える
+  void OnMonsterReachedDefenseLine(EnemyManager monster)
+  {
+    HitEffects.Burst(monster.transform.position, PixelArt.Red);
+    hud.Popup("たべられた!", monster.transform.position, PixelArt.Red);
+    EnemyManager nearest = null;
+    foreach (var life in livesRoot.GetComponentsInChildren<EnemyManager>())
+    {
+      if (nearest == null || Mathf.Abs(life.transform.position.x - monster.transform.position.x) < Mathf.Abs(nearest.transform.position.x - monster.transform.position.x))
+      {
+        nearest = life;
+      }
+    }
+    if (nearest != null)
+    {
+      nearest.Kill();
+    }
+  }
+
+  // ボールがモンスターに当たったときのダメージ。ボールの属性の効果もここで出す
+  public int OnBallHitMonster(BallManager ball, EnemyManager monster)
+  {
+    int damage = RollBallDamage() + ball.ConsumeSmashBonus();
+    if (ball.LoadedElement != Element.None)
+    {
+      TriggerElement(ball.LoadedElement, monster);
+      ball.LoadedElement = Element.None;
+    }
+    // 倒せる一撃なら、そのモンスターの属性をボールがまとう
+    if (damage >= monster.Hp && monster.Element != Element.None)
+    {
+      ball.LoadedElement = monster.Element;
+      hud.Popup(Elements.NameOf(monster.Element) + "!", monster.transform.position, Elements.ColorOf(monster.Element));
+    }
+    return damage;
+  }
+
+  // ボールがボスに当たったときのダメージ（属性をまとっていれば +1）
+  public int OnBallHitBoss(BallManager ball)
+  {
+    int damage = RollBallDamage() + ball.ConsumeSmashBonus();
+    if (ball.LoadedElement != Element.None)
+    {
+      damage++;
+      ball.LoadedElement = Element.None;
+    }
+    return damage;
+  }
+
+  void TriggerElement(Element element, EnemyManager hitMonster)
+  {
+    Vector3 center = hitMonster.transform.position;
+    var others = new List<EnemyManager>();
+    foreach (var monster in monstersRoot.GetComponentsInChildren<EnemyManager>())
+    {
+      if (monster != hitMonster)
+      {
+        others.Add(monster);
+      }
+    }
+    switch (element)
+    {
+      case Element.Fire:
+        // ほのお：まわりのモンスターにも燃え広がる
+        HitEffects.Burst(center, Elements.ColorOf(element));
+        foreach (var monster in others)
+        {
+          if (Vector3.Distance(monster.transform.position, center) <= FireRadius)
+          {
+            monster.TakeDamage(FireDamage);
+          }
+        }
+        break;
+      case Element.Thunder:
+        // かみなり：一番近いモンスターに連鎖する
+        EnemyManager nearest = null;
+        foreach (var monster in others)
+        {
+          if (nearest == null || Vector3.Distance(monster.transform.position, center) < Vector3.Distance(nearest.transform.position, center))
+          {
+            nearest = monster;
+          }
+        }
+        if (nearest != null)
+        {
+          HitEffects.Line(center, nearest.transform.position, Elements.ColorOf(element));
+          nearest.TakeDamage(ThunderDamage);
+        }
+        break;
+      case Element.Ice:
+        // こおり：敵のバーを少しの間こおらせる
+        if (enemyBar.gameObject.activeSelf)
+        {
+          enemyBar.Freeze(IceFreezeSeconds);
+          HitEffects.Burst(enemyBar.transform.position, Elements.ColorOf(element));
+        }
+        break;
+    }
+    hud.Popup(Elements.NameOf(element) + "!", center, Elements.ColorOf(element));
   }
 
   // ボールが当たったときのダメージ（かいしんの一撃は2倍）
-  public int RollBallDamage()
+  int RollBallDamage()
   {
     int damage = RunState.BallDamage;
     if (Random.value < RunState.CriticalChance)
@@ -309,12 +471,13 @@ public class StageRunController : MonoBehaviour
     hud.Popup("BOSS DOWN!", position, PixelArt.Yellow);
   }
 
-  public void OnLifeLost(Vector3 position)
+  public void OnLifeLost(EnemyManager life)
   {
     if (phase != Phase.Playing)
     {
       return;
     }
+    Vector3 position = life.transform.position;
     combo = 0;
     RunState.LoseLife();
     HitEffects.Burst(position, PixelArt.Red);
@@ -323,17 +486,42 @@ public class StageRunController : MonoBehaviour
     {
       HitEffects.Vibrate();
     }
-    if (RunState.Lives > 0)
-    {
-      return;
-    }
-    if (RunState.TryRevive())
+    if (RunState.Lives <= 0 && RunState.TryRevive())
     {
       hud.Popup("ふっかつ!", position, PixelArt.Green);
       StartCoroutine(RespawnLivesNextFrame());
+    }
+    else if (RunState.Lives <= 0)
+    {
+      EndStage(false);
       return;
     }
-    EndStage(false);
+    // ボールに抜かれてやられたときは、ホッケーの得点のようにボールを戻して打ち直す
+    if (life.IsKilledByBall)
+    {
+      StartCoroutine(Serve());
+    }
+  }
+
+  IEnumerator Serve()
+  {
+    phase = Phase.Serving;
+    StopBalls();
+    foreach (var bullet in FindObjectsByType<BossBullet>(FindObjectsSortMode.None))
+    {
+      Destroy(bullet.gameObject);
+    }
+    mainBall.transform.position = ballStartPosition;
+    for (int i = 0; i < extraBalls.Count; i++)
+    {
+      extraBalls[i].transform.position = extraBallStarts[i];
+    }
+    yield return new WaitForSeconds(ServeDelaySeconds);
+    if (phase == Phase.Serving)
+    {
+      LaunchBalls();
+      phase = Phase.Playing;
+    }
   }
 
   // やられたスライムが消えてから並べ直す
@@ -432,17 +620,26 @@ public class StageRunController : MonoBehaviour
   void GoToNextStage()
   {
     RunState.SelectedStage = RunState.Stage + 1;
-    sceneChanger.GoToScene("StagePlay");
+    LeaveTo("StagePlay");
   }
 
   void RetryStage()
   {
     RunState.SelectedStage = RunState.Stage;
-    sceneChanger.GoToScene("StagePlay");
+    LeaveTo("StagePlay");
   }
 
   void GoToMap()
   {
-    sceneChanger.GoToScene("Menu");
+    LeaveTo("Menu");
+  }
+
+  void LeaveTo(string sceneName)
+  {
+    // 広告が出たら、その閉じるボタンを結果画面の暗幕が隠さないよう結果画面を閉じる（どのみちシーンは切り替わる）
+    if (sceneChanger.GoToScene(sceneName))
+    {
+      modalCanvas.gameObject.SetActive(false);
+    }
   }
 }

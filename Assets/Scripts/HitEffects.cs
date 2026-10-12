@@ -65,13 +65,26 @@ public class HitEffects : MonoBehaviour
     Destroy(piece);
   }
 
-  // ボールの通った跡に、薄いコピーを少しだけ残す
-  public static void Afterimage(SpriteRenderer source, Vector3 position)
+  // 2点の間にドットの線を一瞬だけ出す（かみなりの連鎖など）
+  public static void Line(Vector3 from, Vector3 to, Color color)
   {
-    Runner.StartCoroutine(ShowAfterimage(source, position));
+    const float DotSpacing = 0.15f;
+    int count = Mathf.Max(2, Mathf.CeilToInt(Vector3.Distance(from, to) / DotSpacing));
+    for (int i = 0; i <= count; i++)
+    {
+      // 少しジグザグさせて稲妻らしくする
+      Vector3 point = Vector3.Lerp(from, to, i / (float)count) + (Vector3)(Random.insideUnitCircle * 0.06f);
+      Runner.StartCoroutine(MovePiece(point, Vector3.zero, color));
+    }
   }
 
-  static IEnumerator ShowAfterimage(SpriteRenderer source, Vector3 position)
+  // ボールの通った跡に、薄いコピーを少しだけ残す
+  public static void Afterimage(SpriteRenderer source, Vector3 position, Color color)
+  {
+    Runner.StartCoroutine(ShowAfterimage(source, position, color));
+  }
+
+  static IEnumerator ShowAfterimage(SpriteRenderer source, Vector3 position, Color color)
   {
     var ghost = new GameObject("Afterimage");
     ghost.transform.position = PixelArt.Snap(position);
@@ -84,7 +97,7 @@ public class HitEffects : MonoBehaviour
     while (time < AfterimageSeconds)
     {
       time += Time.deltaTime;
-      spriteRenderer.color = new Color(0.55f, 0.85f, 1f, baseAlpha * SteppedFade(time / AfterimageSeconds));
+      spriteRenderer.color = new Color(color.r, color.g, color.b, baseAlpha * SteppedFade(time / AfterimageSeconds));
       yield return null;
     }
     Destroy(ghost);

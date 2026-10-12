@@ -8,32 +8,70 @@ public static class Shapes
     // 1ドット（破片や残像に使う）
     ["dot"] = new[] { "w" },
 
-    // ボス：大きな王冠スライム
+    // ボス：王冠をかぶった大きなスライム（2コマで ぷるぷる動く。Tools/PixelArt/boss.py で陰影を付けて生成）
     ["boss"] = new[]
     {
-      "...........y..y..y...........",
-      "...........yy.yy.yy..........",
-      "...........yyyyyyyy..........",
-      "..........kkkkkkkkkk.........",
-      "........kkttttttttttkk.......",
-      "......kkttttttttttttttkk.....",
-      ".....kttttbbtttttttttttttk...",
-      "....ktttbbbbtttttttttttttk...",
-      "...kttttbbtttttttttttttttk...",
-      "...ktttttttttttttttttttttk...",
-      "..kttttkkkktttttttkkkktttk...",
-      "..ktttkwwwwkttttttkwwwwkttk..",
-      "..ktttkwwkwkttttttkwkwwkttk..",
-      "..ktttkwwkwkttttttkwkwwkttk..",
-      "..kttttkkkktttttttkkkkttttk..",
-      "..kttttttttttttttttttttttttk.",
-      "..ktttttttkrrrrrrrrkttttttk..",
-      "..kttttttttkrrrrrrkttttttttk.",
-      "..ktttttttttkkkkkktttttttttk.",
-      "..kdtttttttttttttttttttttdk..",
-      "...kddtttttttttttttttttddk...",
-      "....kkddddddddddddddddkk.....",
-      "......kkkkkkkkkkkkkkkk.......",
+      "........K.....K......K........",
+      ".......KYK...KYK....KYK.......",
+      ".......KGK..KYGGK...KGK.......",
+      "......KYGGKKYGrGGKKKYGGK......",
+      "......KYGGGGGGGGGGGGGGOK......",
+      "......KYGbGGGGrrGGGGbGOK......",
+      "......KKKKKKKKKKKKKKKKKK......",
+      ".........KKK333333KKK.........",
+      "........K3bb333333222K........",
+      "......bb33333333332222KK......",
+      ".....bwwb333333332222222K.....",
+      "....bwwb3333333322222222K.....",
+      "....KKb33333332222222222KK....",
+      "...KKKKK33333222222222KKKKK...",
+      "...K33KKKK3222222222KKKK21K...",
+      "..K333KKKKK22222222KKKKK111K..",
+      "..K33KwwwwwK222222KwwwwwK11K..",
+      ".K333KwwkkwK222222KwwkkwK111K.",
+      ".K332KwwkkwK222222KwwkkwK111K.",
+      ".K2222KKKKK22222211KKKKK1111K.",
+      ".KPP2222222222221111111111PPK.",
+      ".K22222222222211111111111111K.",
+      ".K222222KKKKKKKKKKKKKK111111K.",
+      ".K222222KwwRRRRRRRRwwK111111K.",
+      "K22222222KwRRRRRRRRwK11111111K",
+      "K22222211KRRRPPPPRRRK11111111K",
+      "K222211111KRPPqqPPRK111111111K",
+      "K1111111111KKKKKKKK1111111111K",
+      "KKKKKKKKKKKKKKKKKKKKKKKKKKKKKK",
+    },
+
+    ["boss_b"] = new[]
+    {
+      "................................",
+      ".........K.....K......K.........",
+      "........KYK...KYK....KYK........",
+      "........KGK..KYGGK...KGK........",
+      ".......KYGGKKYGrGGKKKYGGK.......",
+      ".......KYGGGGGGGGGGGGGGOK.......",
+      ".......KYGbGGGGrrGGGGbGOK.......",
+      ".......KKKKKKKKKKKKKKKKKK.......",
+      "........KK3bb333333222KK........",
+      ".......bb333333333322222K.......",
+      "......bwwb333333332222222K......",
+      ".....bwwb33333332222222222K.....",
+      "....KKKb33333332222222222KKK....",
+      "...K3KKKK33332222222222KKKK1K...",
+      "...K333KKKK2222222222KKKK211K...",
+      "..K3333KKKKK22222222KKKKK1111K..",
+      "..K333KwwwwwK222222KwwwwwK111K..",
+      ".K3332KwwkkwK222222KwwkkwK1111K.",
+      ".K3222KwwkkwK222222KwwkkwK1111K.",
+      ".K22222KKKKK22222111KKKKK11111K.",
+      ".K2PP2222222222111111111111PP1K.",
+      ".K2222222222221111111111111111K.",
+      ".K2222222KKKKKKKKKKKKKK1111111K.",
+      "K22222222KwwRRRRRRRRwwK11111111K",
+      "K222222111KwRRRRRRRRwK111111111K",
+      "K222211111KRRRPPPPRRRK111111111K",
+      "K1111111111KRPPqqPPRK1111111111K",
+      "KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK",
     },
 
     // ボスの弾
@@ -271,6 +309,57 @@ public static class Shapes
       ".kkkkkkk..",
       "..........",
     },
+    // モンスターの属性マーク（5x5）
+    ["badge_fire"] = new[]
+    {
+      "..r..",
+      ".ror.",
+      "royor",
+      "royor",
+      ".rrr.",
+    },
+    ["badge_ice"] = new[]
+    {
+      "b.b.b",
+      ".bwb.",
+      "bwwwb",
+      ".bwb.",
+      "b.b.b",
+    },
+    ["badge_thunder"] = new[]
+    {
+      "..yy.",
+      ".yy..",
+      "yyyy.",
+      "..yy.",
+      ".yy..",
+    },
+    ["icon_curve"] = new[]
+    {
+      "..........",
+      "........bb",
+      "......bbwb",
+      ".....b.bb.",
+      "....b.....",
+      "...b......",
+      "...b......",
+      "..b.......",
+      ".b........",
+      "b.........",
+    },
+    ["icon_ghost"] = new[]
+    {
+      "...pppp...",
+      "..pppppp..",
+      ".pppppppp.",
+      ".pkkppkkp.",
+      ".pkkppkkp.",
+      ".pppppppp.",
+      ".pppppppp.",
+      ".pppppppp.",
+      ".pp.pp.pp.",
+      ".p..p..p..",
+    },
     ["icon_reroll"] = new[]
     {
       "...bbbb...",
@@ -292,6 +381,10 @@ public static class Shapes
     {
       return ShieldBar();
     }
+    if (key == "defense_line")
+    {
+      return DefenseLine();
+    }
     return PadRows(shapes[key]);
   }
 
@@ -309,6 +402,18 @@ public static class Shapes
       padded[i] = rows[i].PadRight(width, '.');
     }
     return padded;
+  }
+
+  // 防衛ライン（赤い点線）
+  static string[] DefenseLine()
+  {
+    const int width = 96;
+    var row = new System.Text.StringBuilder();
+    for (int x = 0; x < width; x++)
+    {
+      row.Append(x % 4 < 2 ? 'r' : '.');
+    }
+    return new[] { row.ToString() };
   }
 
   // フィールド幅いっぱいのバリア（横長なので文字列を組み立てて作る）

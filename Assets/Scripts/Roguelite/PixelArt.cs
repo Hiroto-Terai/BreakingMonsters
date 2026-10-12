@@ -45,6 +45,16 @@ public static class PixelArt
       case 'g': return Green;
       case 'a': return Gray;
       case 'k': return Black;
+      // ボス用の陰影・王冠の色
+      case 'K': return new Color32(10, 20, 32, 255);
+      case '1': return new Color32(22, 50, 64, 255);
+      case '2': return new Color32(40, 86, 104, 255);
+      case '3': return new Color32(70, 128, 146, 255);
+      case 'P': return new Color32(255, 140, 160, 255);
+      case 'q': return new Color32(255, 190, 200, 255);
+      case 'Y': return new Color32(255, 236, 140, 255);
+      case 'G': return new Color32(250, 190, 60, 255);
+      case 'O': return new Color32(170, 100, 30, 255);
       default: return Clear;
     }
   }
@@ -74,10 +84,16 @@ public static class PixelArt
   // ゲーム画面に置くためのスプライト（ドットの大きさをワールドでそろえる）
   public static Sprite WorldSprite(string key)
   {
-    return Get("world_" + key, () =>
+    return WorldSprite(key, new Vector2(0.5f, 0.5f));
+  }
+
+  // pivot は絵のどこを位置の基準にするか（0.5, 0 なら下端の中央）
+  public static Sprite WorldSprite(string key, Vector2 pivot)
+  {
+    return Get("world_" + key + pivot, () =>
     {
       var texture = MakeTexture(Shapes.Get(key));
-      return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), WorldPixelsPerUnit);
+      return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), pivot, WorldPixelsPerUnit);
     });
   }
 

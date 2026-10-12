@@ -6,14 +6,16 @@ public class Boss : MonoBehaviour
 {
   // ドットを2倍の大きさで描いて存在感を出す（整数倍なのでドットの見た目は崩れない）
   const float PixelScale = 2f;
-  const float MoveLimitX = 1f;
-  const float PositionY = 1.55f;
+  const float MoveLimitX = 0.85f;
+  // 2コマの絵を交互に出して、ぷるぷる動いているように見せる
+  const float FrameSeconds = 0.35f;
+  static readonly Vector2 BottomPivot = new Vector2(0.5f, 0f);
   const float ColliderShrink = 0.85f;
   const float FlashSeconds = 0.08f;
   // ボールが何個あっても一瞬で倒れないよう、当たった直後は少しだけ無敵にする
   const float InvincibleSeconds = 0.12f;
   float invincibleUntil;
-  const float ShotOffsetY = 1.1f;
+  const float ShotOffsetY = 0.1f;
 
   public int Hp { get; private set; }
   public int MaxHp { get; private set; }
@@ -23,19 +25,21 @@ public class Boss : MonoBehaviour
   float shotTimer;
   bool isDead;
 
-  public static Boss Create(FloorData floor)
+  // bottomY はボスの足元（絵の下端）の高さ
+  public static Boss Create(FloorData floor, float bottomY)
   {
     var gameObject = new GameObject("Boss");
     gameObject.tag = "Enemy";
-    gameObject.transform.position = new Vector3(0f, PositionY, 0f);
+    gameObject.transform.position = new Vector3(0f, bottomY, 0f);
     gameObject.transform.localScale = Vector3.one * PixelScale;
     var spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-    spriteRenderer.sprite = PixelArt.WorldSprite("boss");
+    spriteRenderer.sprite = PixelArt.WorldSprite("boss", BottomPivot);
     // ボールと同じ物理で跳ね返るよう、動く壁（Kinematic）として扱う
     var body = gameObject.AddComponent<Rigidbody2D>();
     body.bodyType = RigidbodyType2D.Kinematic;
     var collider = gameObject.AddComponent<BoxCollider2D>();
     collider.size = spriteRenderer.sprite.bounds.size * ColliderShrink;
+    collider.offset = spriteRenderer.sprite.bounds.center;
     var boss = gameObject.AddComponent<Boss>();
     boss.floor = floor;
     boss.MaxHp = floor.BossHp;
@@ -47,6 +51,8 @@ public class Boss : MonoBehaviour
 
   void Update()
   {
+    bool isSquashed = Mathf.FloorToInt(Time.time / FrameSeconds) % 2 == 1;
+    spriteRenderer.sprite = PixelArt.WorldSprite(isSquashed ? "boss_b" : "boss", BottomPivot);
     if (isDead || !StageRunController.Instance.IsPlaying)
     {
       return;
@@ -70,12 +76,13 @@ public class Boss : MonoBehaviour
 
   private void OnCollisionEnter2D(Collision2D collision)
   {
-    if (isDead || collision.gameObject.GetComponent<BallManager>() == null || Time.time < invincibleUntil)
+    var ball = collision.gameObject.GetComponent<BallManager>();
+    if (isDead || ball == null || Time.time < invincibleUntil)
     {
       return;
     }
     invincibleUntil = Time.time + InvincibleSeconds;
-    Hp -= StageRunController.Instance.RollBallDamage();
+    Hp -= StageRunController.Instance.OnBallHitBoss(ball);
     HitEffects.Burst(collision.GetContact(0).point, PixelArt.LightBlue);
     if (Hp <= 0)
     {

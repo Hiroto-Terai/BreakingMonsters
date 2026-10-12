@@ -44,7 +44,9 @@ public class StageSelectScreen : MonoBehaviour
     BuildStageList();
 
     var skillButton = PixelUI.CreateButton(root, "スキルツリー", PixelUI.LargeFont, PixelArt.Purple, OpenSkillTree);
-    PixelUI.Place((RectTransform)skillButton.transform, new Vector2(0.5f, 0f), new Vector2(0f, SkillButtonY), new Vector2(800f, 160f));
+    PixelUI.Place((RectTransform)skillButton.transform, new Vector2(0.5f, 0f), new Vector2(-300f, SkillButtonY), new Vector2(600f, 160f));
+    var versusButton = PixelUI.CreateButton(root, "たいせん", PixelUI.LargeFont, PixelArt.DarkRed, OpenVersus);
+    PixelUI.Place((RectTransform)versusButton.transform, new Vector2(0.5f, 0f), new Vector2(320f, SkillButtonY), new Vector2(520f, 160f));
     Refresh();
   }
 
@@ -146,6 +148,12 @@ public class StageSelectScreen : MonoBehaviour
   {
     PlayButtonSound();
     new SkillTreeScreen(PixelUI.CreateOverlayCanvas("SkillTreeCanvas", 100).transform, () => { PlayButtonSound(); Refresh(); });
+  }
+
+  void OpenVersus()
+  {
+    PlayButtonSound();
+    new VersusSetupScreen(PixelUI.CreateOverlayCanvas("VersusSetupCanvas", 100).transform, PlayButtonSound);
   }
 
   void PlayButtonSound()
