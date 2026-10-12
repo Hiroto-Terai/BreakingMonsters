@@ -74,13 +74,13 @@ public class BallManager : MonoBehaviour
         if (!isCalledOnce)
         {
           isCalledOnce = true;
-          myRigidbody2d.velocity = new Vector3(speed, speed, 0);
+          myRigidbody2d.linearVelocity = new Vector3(speed, speed, 0);
         }
       }
     }
 
     // 速度チェック
-    Vector2 velocity = myRigidbody2d.velocity;
+    Vector2 velocity = myRigidbody2d.linearVelocity;
     // 速さを計算
     // Clampで速さを制限
     // Mathf.Clamp(値, 最小値, 最大値)のように用いる
@@ -88,10 +88,10 @@ public class BallManager : MonoBehaviour
     float clampedSpeed = Mathf.Clamp(velocity.magnitude, minSpeed, maxSpeed);
     // 速度を変更
     // 大きさ1のベクトル(normalized) * 速さ
-    myRigidbody2d.velocity = velocity.normalized * clampedSpeed;
+    myRigidbody2d.linearVelocity = velocity.normalized * clampedSpeed;
 
     // 移動する方向のベクトルを正規化(大きさ1のベクトルに変換)
-    Vector2 velocityNormalized = myRigidbody2d.velocity.normalized;
+    Vector2 velocityNormalized = myRigidbody2d.linearVelocity.normalized;
 
     //移動する方向を一定の範囲に制限する
     // 垂直方向は垂直から10度内の範囲には入らないようにする
@@ -139,9 +139,9 @@ public class BallManager : MonoBehaviour
       // プレイヤーから見たボールの方向を計算
       Vector2 direction = (ballPos - playerPos).normalized;
       // 現在のボールの速さを取得
-      float speed = myRigidbody2d.velocity.magnitude;
+      float speed = myRigidbody2d.linearVelocity.magnitude;
       // 速度を変更
-      myRigidbody2d.velocity = direction * speed;
+      myRigidbody2d.linearVelocity = direction * speed;
     }
 
     // 敵プレイヤーに当たった時

@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEditor;
 using UnityEngine;
 using System.IO;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 [InitializeOnLoad]
 public class AutoSave
@@ -14,7 +16,7 @@ public class AutoSave
 	static AutoSave ()
 	{
 		IsManualSave = true;
-		EditorApplication.playmodeStateChanged += () =>
+		EditorApplication.playModeStateChanged += _ =>
 		{
 			if ( IsAutoSave && !EditorApplication.isPlaying && EditorApplication.isPlayingOrWillChangePlaymode) {
 
@@ -24,7 +26,7 @@ public class AutoSave
 					AssetDatabase.SaveAssets ();
 				if (IsSaveScene) {
 					Debug.Log ("save scene " + System.DateTime.Now);
-					EditorApplication.SaveScene ();
+					EditorSceneManager.SaveScene (SceneManager.GetActiveScene ());
 				}
 				IsManualSave = true;
 			}
@@ -44,7 +46,7 @@ public class AutoSave
 						AssetDatabase.SaveAssets ();
 					if (IsSaveScene) {
 						Debug.Log ("save scene " + System.DateTime.Now);
-						EditorApplication.SaveScene ();
+						EditorSceneManager.SaveScene (SceneManager.GetActiveScene ());
 					}
 				}
 				isChangedHierarchy = false;
@@ -52,7 +54,7 @@ public class AutoSave
 			}
 		};
 
-		EditorApplication.hierarchyWindowChanged += ()=>
+		EditorApplication.hierarchyChanged += ()=>
 		{
 			if(! EditorApplication.isPlaying)
 				isChangedHierarchy = true;
@@ -131,7 +133,14 @@ public class AutoSave
 	}
 
 
-	[PreferenceItem("Auto Save")] 
+	[SettingsProvider]
+	static SettingsProvider CreateSettingsProvider ()
+	{
+		return new SettingsProvider ("Preferences/Auto Save", SettingsScope.User) {
+			guiHandler = _ => ExampleOnGUI ()
+		};
+	}
+
 	static void ExampleOnGUI ()
 	{
 		bool isAutoSave = EditorGUILayout.BeginToggleGroup ("auto save", IsAutoSave);
@@ -150,24 +159,24 @@ public class AutoSave
 	[MenuItem("File/Backup/Backup")]
 	public static void Backup ()
 	{
-		string expoertPath = "Backup/" + EditorApplication.currentScene;
+		string expoertPath = "Backup/" + SceneManager.GetActiveScene ().path;
 
 		Directory.CreateDirectory (Path.GetDirectoryName (expoertPath));
 
-		if( string.IsNullOrEmpty(EditorApplication.currentScene))
+		if( string.IsNullOrEmpty(SceneManager.GetActiveScene ().path))
 			return;
 
-		byte[] data = File.ReadAllBytes (EditorApplication.currentScene);
+		byte[] data = File.ReadAllBytes (SceneManager.GetActiveScene ().path);
 		File.WriteAllBytes (expoertPath, data);
 	}
 
 	[MenuItem("File/Backup/Rollback")]
 	public static void RollBack ()
 	{
-		string expoertPath = "Backup/" + EditorApplication.currentScene;
+		string expoertPath = "Backup/" + SceneManager.GetActiveScene ().path;
 		
 		byte[] data = File.ReadAllBytes (expoertPath);
-		File.WriteAllBytes (EditorApplication.currentScene, data);
+		File.WriteAllBytes (SceneManager.GetActiveScene ().path, data);
 		AssetDatabase.Refresh (ImportAssetOptions.Default);
 	}
 

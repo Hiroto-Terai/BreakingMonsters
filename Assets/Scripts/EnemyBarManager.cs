@@ -24,7 +24,7 @@ public class EnemyBarManager : MonoBehaviour
       if (SceneManager.GetActiveScene().name != "HardModePlay")
       {
         // ボールが右向きに動いている時
-        if (ballrb.velocity.x > 0)
+        if (ballrb.linearVelocity.x > 0)
         {
           // 敵のバーも右向きに動く
           if (this.transform.position.x < 1.8)
@@ -33,7 +33,7 @@ public class EnemyBarManager : MonoBehaviour
           }
         }
         // ボールが左向きに動いている時
-        else if (ballrb.velocity.x < 0)
+        else if (ballrb.linearVelocity.x < 0)
         {
           if (this.transform.position.x > -1.8)
           {
@@ -44,7 +44,7 @@ public class EnemyBarManager : MonoBehaviour
       else if (SceneManager.GetActiveScene().name == "HardModePlay")
       {
         // ボールが右向きに動いている時
-        if (ballrb.velocity.x > 0)
+        if (ballrb.linearVelocity.x > 0)
         {
           // 敵のバーも右向きに動く
           if (this.transform.position.x < 1.2)
@@ -53,7 +53,7 @@ public class EnemyBarManager : MonoBehaviour
           }
         }
         // ボールが左向きに動いている時
-        else if (ballrb.velocity.x < 0)
+        else if (ballrb.linearVelocity.x < 0)
         {
           if (this.transform.position.x > -1.2)
           {

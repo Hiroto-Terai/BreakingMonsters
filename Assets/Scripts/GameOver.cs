@@ -46,7 +46,7 @@ public class GameOver : MonoBehaviour
           AudioSource.PlayClipAtPoint(GameOverSound, transform.position);
         }
       }
-      GameObject.Find("Ball").GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+      GameObject.Find("Ball").GetComponent<Rigidbody2D>().linearVelocity = new Vector3(0, 0, 0);
       isGameOver = true;
       if (isGameOver == true)
       {

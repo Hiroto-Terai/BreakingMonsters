@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-
-
 public class OptionManager : MonoBehaviour
 {
   // オプションキャンバスのゲームオブジェクト
@@ -19,6 +17,14 @@ public class OptionManager : MonoBehaviour
 
   // SEが再生されているか
   public static bool isSePlaying = true;
+
+  // ドメインリロード無効時もエディタ再生ごとに初期値から始めるため
+  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+  static void ResetStatics()
+  {
+    isBgmPlaying = true;
+    isSePlaying = true;
+  }
 
   public GameObject Music;
   public AudioClip ButtonSound;
