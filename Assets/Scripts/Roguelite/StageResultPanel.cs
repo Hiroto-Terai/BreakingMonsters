@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 // ステージクリア／ゲームオーバー時の結果画面
 public class StageResultPanel
@@ -10,6 +11,12 @@ public class StageResultPanel
   const float StarGap = 190f;
   const float ButtonWidth = 340f;
   const float ButtonHeight = 140f;
+  const float DoubleCoinsButtonWidth = 640f;
+  const float DoubleCoinsButtonHeight = 110f;
+
+  Text coinsText;
+  Text totalText;
+  Button doubleCoinsButton;
 
   public struct Result
   {
@@ -21,7 +28,7 @@ public class StageResultPanel
     public int CoinsEarned;
   }
 
-  public StageResultPanel(Transform canvas, Result result, UnityAction onNext, UnityAction onRetry, UnityAction onMap)
+  public StageResultPanel(Transform canvas, Result result, UnityAction onNext, UnityAction onRetry, UnityAction onMap, UnityAction onDoubleCoins)
   {
     var root = PixelUI.Stretch(PixelUI.CreateRect("StageResultPanel", canvas));
     PixelUI.CreateDimmer(root, 0.7f);
@@ -49,13 +56,22 @@ public class StageResultPanel
 
     var coinIcon = PixelUI.CreateIcon(panel.transform, "coin", 10f);
     PixelUI.Place(coinIcon.rectTransform, center, new Vector2(-200f, 110f), coinIcon.rectTransform.sizeDelta);
-    var coins = PixelUI.CreateText(panel.transform, "+" + result.CoinsEarned, PixelUI.HugeFont, PixelArt.Yellow, TextAnchor.MiddleLeft);
-    PixelUI.Place(coins.rectTransform, center, new Vector2(110f, 110f), new Vector2(500f, 130f));
-    var total = PixelUI.CreateText(panel.transform, "もちコイン " + Progress.Coins, PixelUI.SmallFont, PixelArt.Pale);
-    PixelUI.Place(total.rectTransform, center, new Vector2(0f, -10f), new Vector2(PanelWidth, 60f));
+    coinsText = PixelUI.CreateText(panel.transform, "+" + result.CoinsEarned, PixelUI.HugeFont, PixelArt.Yellow, TextAnchor.MiddleLeft);
+    PixelUI.Place(coinsText.rectTransform, center, new Vector2(110f, 110f), new Vector2(500f, 130f));
+    totalText = PixelUI.CreateText(panel.transform, "もちコイン " + Progress.Coins, PixelUI.SmallFont, PixelArt.Pale);
+    PixelUI.Place(totalText.rectTransform, center, new Vector2(0f, -10f), new Vector2(PanelWidth, 60f));
 
-    var hint = PixelUI.CreateText(panel.transform, "コインでスキルツリーを強化しよう", PixelUI.SmallFont, PixelArt.LightBlue);
-    PixelUI.Place(hint.rectTransform, center, new Vector2(0f, -110f), new Vector2(PanelWidth, 60f));
+    // 広告でコイン2倍にできるときは、ヒントの代わりにボタンを出す
+    if (onDoubleCoins != null)
+    {
+      doubleCoinsButton = PixelUI.CreateButton(panel.transform, "広告を見て コイン2倍", PixelUI.SmallFont, PixelArt.Purple, onDoubleCoins);
+      PixelUI.Place((RectTransform)doubleCoinsButton.transform, center, new Vector2(0f, -110f), new Vector2(DoubleCoinsButtonWidth, DoubleCoinsButtonHeight));
+    }
+    else
+    {
+      var hint = PixelUI.CreateText(panel.transform, "コインでスキルツリーを強化しよう", PixelUI.SmallFont, PixelArt.LightBlue);
+      PixelUI.Place(hint.rectTransform, center, new Vector2(0f, -110f), new Vector2(PanelWidth, 60f));
+    }
 
     bool hasNext = result.IsClear && result.Stage < StageDatabase.StageCount;
     float buttonY = -400f;
@@ -68,5 +84,16 @@ public class StageResultPanel
     PixelUI.Place((RectTransform)retry.transform, center, new Vector2(-200f, buttonY), new Vector2(ButtonWidth, ButtonHeight));
     var map = PixelUI.CreateButton(panel.transform, "MAP", PixelUI.MediumFont, PixelArt.Teal, onMap);
     PixelUI.Place((RectTransform)map.transform, center, new Vector2(200f, buttonY), new Vector2(ButtonWidth, ButtonHeight));
+  }
+
+  public void HideDoubleCoinsButton()
+  {
+    doubleCoinsButton.gameObject.SetActive(false);
+  }
+
+  public void ShowDoubledCoins(int coinsEarned)
+  {
+    coinsText.text = "+" + coinsEarned;
+    totalText.text = "もちコイン " + Progress.Coins;
   }
 }

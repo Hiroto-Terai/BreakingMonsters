@@ -67,6 +67,12 @@ public static class RunState
     return true;
   }
 
+  // 広告を見て、全滅から1匹で立て直す
+  public static void ReviveByAd()
+  {
+    Lives = 1;
+  }
+
   public static bool TryUseReroll()
   {
     if (RerollsLeft <= 0)

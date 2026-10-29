@@ -1,52 +1,55 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using GoogleMobileAds.Api;
+using GoogleMobileAds.Common;
+using UnityEngine;
 
+// 画面切り替えのときに挟む全画面広告。シーンに入ったら読み込んでおき、出せるときだけ出す
 public class GoogleInterStitialAds : MonoBehaviour
 {
-  private void Start()
+  InterstitialAd interstitial;
+
+  void Start()
   {
-    Debug.Log("OnEnable now");
-    RequestInterstitial();
+    // 広告SDKのコールバックは Unity のメインスレッド以外から届くことがあるので、ExecuteInUpdate で戻してから扱う
+    InterstitialAd.Load(AdUnits.Interstitial, new AdRequest(), (ad, error) => MobileAdsEventExecutor.ExecuteInUpdate(() => OnLoaded(ad, error)));
   }
-  private InterstitialAd interstitial;
 
-  private void RequestInterstitial()
+  void OnDestroy()
   {
-#if UNITY_IPHONE
-    string adUnitId = "ca-app-pub-1161341815062676/3158080372";
-#else
-    string adUnitId = "unexpected_platform";
-#endif
-
-    // Initialize an InterstitialAd.
-    this.interstitial = new InterstitialAd(adUnitId);
-    interstitial.OnAdClosed += HandleOnAdClosed;
-
-    // Create an empty ad request.
-    AdRequest request = new AdRequest.Builder().Build();
-    Debug.Log("Build now");
-    // Load the interstitial with the request.
-    this.interstitial.LoadAd(request);
-    Debug.Log("LoadAd now");
+    interstitial?.Destroy();
   }
+
+  void OnLoaded(InterstitialAd ad, LoadAdError error)
+  {
+    if (error != null)
+    {
+      Debug.LogWarning("インタースティシャル広告を読み込めなかった: " + error.GetMessage());
+      return;
+    }
+    // 読み込み中にシーンを出ていたら使わない
+    if (this == null)
+    {
+      ad.Destroy();
+      return;
+    }
+    interstitial = ad;
+    interstitial.OnAdFullScreenContentClosed += () => MobileAdsEventExecutor.ExecuteInUpdate(OnClosed);
+    interstitial.OnAdFullScreenContentFailed += _ => MobileAdsEventExecutor.ExecuteInUpdate(OnClosed);
+  }
+
   // 広告を表示できたら true を返す（未ロードなら表示しない）
   public bool ShowAds()
   {
-    if (!this.interstitial.IsLoaded())
+    if (interstitial == null || !interstitial.CanShowAd())
     {
       return false;
     }
-    Debug.Log("Show now");
-    this.interstitial.Show();
+    interstitial.Show();
     return true;
   }
-  public void HandleOnAdClosed(object sender, EventArgs args)
+
+  // 広告を出している間は時間を止めているので、閉じたら再開する
+  void OnClosed()
   {
-    Debug.Log("Destroy now");
-    interstitial.Destroy();
-    Time.timeScale = 1;
+    Time.timeScale = 1f;
   }
 }

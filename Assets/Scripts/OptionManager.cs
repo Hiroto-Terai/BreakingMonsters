@@ -113,7 +113,8 @@ public class OptionManager : MonoBehaviour
     playButtonSound();
 
     AdsCount.adsCount += 1;
-    bool isAdShown = AdsCount.adsCount % 3 == 0 && GoogleInterStitialAds.GetComponent<GoogleInterStitialAds>().ShowAds();
+    bool isAdShown = AdsCount.adsCount % 3 == 0 && !RewardedAds.HasJustWatched && GoogleInterStitialAds.GetComponent<GoogleInterStitialAds>().ShowAds();
+    RewardedAds.HasJustWatched = false;
     // 広告の閉じるボタンが一時停止画面の暗幕に隠れて押せなくならないよう、一時停止画面は閉じておく
     if (isAdShown && OptionCanvas != null)
     {

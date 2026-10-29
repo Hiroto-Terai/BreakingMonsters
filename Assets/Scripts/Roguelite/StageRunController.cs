@@ -10,7 +10,7 @@ public class StageRunController : MonoBehaviour
   public GameObject enemySlimePrefab;
   public GameObject playerSlimePrefab;
 
-  enum Phase { Setup, Countdown, Playing, Serving, Choosing, Ended }
+  enum Phase { Setup, Countdown, Playing, Serving, Choosing, ReviveOffer, Ended }
 
   const float LifeSpacingX = 0.95f;
   // バーが壁にめり込まない範囲：壁の内側の端 - バーの半分の幅
@@ -41,6 +41,10 @@ public class StageRunController : MonoBehaviour
   FloorData floor;
   Boss boss;
   Shield shield;
+  // 広告を見ての ふっかつ は1ステージに1回まで
+  bool hasUsedAdRevive;
+  RevivePanel revivePanel;
+  StageResultPanel resultPanel;
 
   Transform monstersRoot;
   Transform livesRoot;
@@ -493,6 +497,11 @@ public class StageRunController : MonoBehaviour
     }
     else if (RunState.Lives <= 0)
     {
+      if (!hasUsedAdRevive && RewardedAds.IsReady)
+      {
+        OfferAdRevive();
+        return;
+      }
       EndStage(false);
       return;
     }
@@ -501,6 +510,40 @@ public class StageRunController : MonoBehaviour
     {
       StartCoroutine(Serve());
     }
+  }
+
+  // 全滅したとき、広告を見れば1匹で続けられるか聞く（聞いている間は時間を止める）
+  void OfferAdRevive()
+  {
+    phase = Phase.ReviveOffer;
+    StopBalls();
+    Time.timeScale = 0f;
+    revivePanel = new RevivePanel(modalCanvas.transform, WatchAdToRevive, GiveUpRevive);
+  }
+
+  void WatchAdToRevive()
+  {
+    revivePanel.Close();
+    revivePanel = null;
+    hasUsedAdRevive = true;
+    RewardedAds.Show(ReviveAfterAd, GiveUpRevive);
+  }
+
+  void ReviveAfterAd()
+  {
+    Time.timeScale = 1f;
+    RunState.ReviveByAd();
+    hud.Popup("ふっかつ!", player.transform.position + Vector3.up, PixelArt.Green);
+    StartCoroutine(RespawnLivesNextFrame());
+    StartCoroutine(Serve());
+  }
+
+  void GiveUpRevive()
+  {
+    revivePanel?.Close();
+    revivePanel = null;
+    Time.timeScale = 1f;
+    EndStage(false);
   }
 
   IEnumerator Serve()
@@ -606,7 +649,19 @@ public class StageRunController : MonoBehaviour
       FloorCount = floorCount,
       CoinsEarned = RunState.CoinsEarned,
     };
-    new StageResultPanel(modalCanvas.transform, result, GoToNextStage, RetryStage, GoToMap);
+    bool canDoubleCoins = RunState.CoinsEarned > 0 && RewardedAds.IsReady;
+    resultPanel = new StageResultPanel(modalCanvas.transform, result, GoToNextStage, RetryStage, GoToMap, canDoubleCoins ? WatchAdToDoubleCoins : null);
+  }
+
+  // 広告を見たら、持ち帰るコインをもう1回分もらえる
+  void WatchAdToDoubleCoins()
+  {
+    resultPanel.HideDoubleCoinsButton();
+    RewardedAds.Show(() =>
+    {
+      Progress.AddCoins(RunState.CoinsEarned);
+      resultPanel.ShowDoubledCoins(RunState.CoinsEarned * 2);
+    }, () => { });
   }
 
   // 残ったスライムの割合で星を決める（全員無事なら3つ）
