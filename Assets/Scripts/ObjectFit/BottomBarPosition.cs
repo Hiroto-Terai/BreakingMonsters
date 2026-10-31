@@ -1,17 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+// 下の壁（ここにボールが当たると、その先の仲間がやられる）。当たり判定の上端がフィールドの下端にそろうよう置き、
+// ホームバーの下まで背景が見えないよう下へ長く伸ばす
 public class BottomBarPosition : MonoBehaviour
 {
-  private Camera _mainCamera;
+  const float WallHeight = 6f;
 
-  // Start is called before the first frame update
   void Start()
   {
-    // カメラオブジェクトを取得します
-    GameObject obj = GameObject.Find("Main Camera");
-    _mainCamera = obj.GetComponent<Camera>();
-    this.transform.position = _mainCamera.ScreenToWorldPoint(new Vector3(Screen.width / 2, 0, 10f));
+    WallStretch.Stretch(transform, WallHeight, Playfield.BottomWallInnerY, -1f);
   }
 }

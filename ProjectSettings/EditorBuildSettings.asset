@@ -12,12 +12,10 @@ EditorBuildSettings:
     path: Assets/Scenes/Menu.unity
     guid: 4721343a72c96413ab9b11a3726bbd70
   - enabled: 1
-    path: Assets/Scenes/EasyModePlay.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+    path: Assets/Scenes/StagePlay.unity
+    guid: 18c7c23e52feb4f62a27596f830d3d5f
   - enabled: 1
-    path: Assets/Scenes/NormalModePlay.unity
-    guid: bde55cdaaa9264e9281fd2c9f4db0309
-  - enabled: 1
-    path: Assets/Scenes/HardModePlay.unity
-    guid: df46a13dca5f44c95a611ae0bed2217f
+    path: Assets/Scenes/VersusPlay.unity
+    guid: 44cd038dbb88d46cd8d733df49585a58
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

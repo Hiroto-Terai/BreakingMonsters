@@ -39,6 +39,7 @@ public class FadeManager : MonoBehaviour
 	private float fadeAlpha = 0;
 	/// <summary>フェード中かどうか</summary>
 	private bool isFading = false;
+	public bool IsFading { get { return this.isFading; } }
 	/// <summary>フェード色</summary>
 	public Color fadeColor = Color.black;
 
@@ -107,6 +108,11 @@ public class FadeManager : MonoBehaviour
 	/// <param name='interval'>暗転にかかる時間(秒)</param>
 	public void LoadScene (string scene, float interval)
 	{
+		//暗転中の再呼び出しで二重に遷移しないようにする .
+		if (this.isFading) {
+			return;
+		}
+		this.isFading = true;
 		StartCoroutine (TransScene (scene, interval));
 	}
 

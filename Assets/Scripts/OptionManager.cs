@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-
-
 public class OptionManager : MonoBehaviour
 {
   // オプションキャンバスのゲームオブジェクト
@@ -20,9 +18,29 @@ public class OptionManager : MonoBehaviour
   // SEが再生されているか
   public static bool isSePlaying = true;
 
+  const string BgmPrefsKey = "option_bgm";
+  const string SePrefsKey = "option_se";
+  const float BgmVolume = 0.15f;
+  const float FadeSeconds = 0.3f;
+  const int InterstitialStartStage = 3;
+
+  // アプリ起動時（エディタでは再生のたび）に保存済みの設定を読み込む
+  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+  static void LoadSettings()
+  {
+    isBgmPlaying = PlayerPrefs.GetInt(BgmPrefsKey, 1) == 1;
+    isSePlaying = PlayerPrefs.GetInt(SePrefsKey, 1) == 1;
+    wasTimeStoppedBeforeOption = false;
+  }
+
+  static void SaveSettings()
+  {
+    PlayerPrefs.SetInt(BgmPrefsKey, isBgmPlaying ? 1 : 0);
+    PlayerPrefs.SetInt(SePrefsKey, isSePlaying ? 1 : 0);
+    PlayerPrefs.Save();
+  }
+
   public GameObject Music;
-  public AudioClip ButtonSound;
-  private string sceneNameForRetry;
 
   public GameObject GoogleInterStitialAds;
 
@@ -32,19 +50,39 @@ public class OptionManager : MonoBehaviour
     TwitterURL = "https://twitter.com/hirot_gamedev";
     PrivacyPolicyURL = "https://hiroto-terai.github.io/BreakingMonsters/";
     Music = GameObject.Find("Music");
-
-    if (OptionManager.isBgmPlaying == true)
+    // 結果画面のボタンが出る時点ではBGMが止められていて見つからない
+    if (Music == null)
     {
-      Music.GetComponent<AudioSource>().volume = 0.15f;
+      return;
+    }
+    Music.GetComponent<AudioSource>().volume = isBgmPlaying ? BgmVolume : 0f;
+  }
+  // 宝箱やレベルアップの選択中（時間が止まっている）に開いたかどうか。閉じたときにその状態へ戻す。
+  // 開くのは一時停止ボタン、閉じるのはメニューの中のボタンで、それぞれ別の OptionManager なので共有する
+  static bool wasTimeStoppedBeforeOption;
+
+  // Android の戻るボタンで一時停止メニューを開け閉めする。
+  // OptionManager はメニューの中のボタンごとにも付いているので、メニューの外にある一時停止ボタンのものだけが受け持つ
+  void Update()
+  {
+    if (!Input.GetKeyDown(KeyCode.Escape) || OptionCanvas == null || transform.IsChildOf(OptionCanvas.transform))
+    {
+      return;
+    }
+    if (OptionCanvas.activeSelf)
+    {
+      closeOption();
     }
     else
     {
-      Music.GetComponent<AudioSource>().volume = 0f;
+      openOption();
     }
   }
+
   public void openOption()
   {
     playButtonSound();
+    wasTimeStoppedBeforeOption = Time.timeScale == 0f;
     Time.timeScale = 0f;
     OptionCanvas.SetActive(true);
 
@@ -60,7 +98,9 @@ public class OptionManager : MonoBehaviour
 
   public void closeOption()
   {
-    Time.timeScale = 1f;
+    // 選択中に開いたなら止めたまま戻す（そのまま動かすと、強化を選んでいる間にボールが進んでしまう）。
+    // ヒットストップなどの途中だったときは、戻す処理が一時停止中に済んでいることがあるので、ふつうの速さに戻す
+    Time.timeScale = wasTimeStoppedBeforeOption ? 0f : 1f;
     playButtonSound();
     OptionCanvas.SetActive(false);
   }
@@ -80,44 +120,38 @@ public class OptionManager : MonoBehaviour
 
   public void goToMenuScene()
   {
-    // ならしてすぐ消す
-    Time.timeScale = 1f;
-    playButtonSound();
-    Time.timeScale = 0f;
-
-    AdsCount.adsCount += 1;
-    // 3回に1回広告表示
-    if (AdsCount.adsCount % 3 == 0)
-    {
-      // GoogleInterStitialAds.SetActive(true);
-      GoogleInterStitialAds.GetComponent<GoogleInterStitialAds>().ShowAds();
-    }
-    else
-    {
-      Time.timeScale = 1f;
-    }
-    FadeManager.Instance.LoadScene("Menu", 0.3f);
+    GoToScene("Menu");
   }
+
   public void Retry()
   {
-    // ならしてすぐ消す
-    Time.timeScale = 1f;
+    GoToScene(SceneManager.GetActiveScene().name);
+  }
+
+  // 3回に1回は広告を挟んでからシーンを切り替える。広告を出したら true を返す
+  public bool GoToScene(string sceneName)
+  {
+    // 連打で二重に遷移しないようにする
+    if (FadeManager.Instance.IsFading)
+    {
+      return false;
+    }
     playButtonSound();
-    Time.timeScale = 0f;
 
     AdsCount.adsCount += 1;
-    // 3回に1回広告表示
-    if (AdsCount.adsCount % 3 == 0)
+    // 遊び始めの数ステージは広告を挟まず、面白さに入りこんでもらう
+    bool isAdTurn = AdsCount.adsCount % 3 == 0 && Progress.HighestCleared >= InterstitialStartStage;
+    bool isAdShown = isAdTurn && !RewardedAds.HasJustWatched && GoogleInterStitialAds.GetComponent<GoogleInterStitialAds>().ShowAds();
+    RewardedAds.HasJustWatched = false;
+    // 広告の閉じるボタンが一時停止画面の暗幕に隠れて押せなくならないよう、一時停止画面は閉じておく
+    if (isAdShown && OptionCanvas != null)
     {
-      // GoogleInterStitialAds.SetActive(true);
-      GoogleInterStitialAds.GetComponent<GoogleInterStitialAds>().ShowAds();
+      OptionCanvas.SetActive(false);
     }
-    else
-    {
-      Time.timeScale = 1f;
-    }
-    sceneNameForRetry = SceneManager.GetActiveScene().name;
-    FadeManager.Instance.LoadScene(sceneNameForRetry, 0.3f);
+    // 広告表示中は時間を止め、広告を閉じたときに再開する（広告が出せなければ止めない）
+    Time.timeScale = isAdShown ? 0f : 1f;
+    FadeManager.Instance.LoadScene(sceneName, FadeSeconds);
+    return isAdShown;
   }
 
   public void BgmController()
@@ -127,13 +161,15 @@ public class OptionManager : MonoBehaviour
       isBgmPlaying = false;
       playButtonSound();
       Music.GetComponent<AudioSource>().volume = 0f;
+      SaveSettings();
       this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
     }
     else
     {
       isBgmPlaying = true;
       playButtonSound();
-      Music.GetComponent<AudioSource>().volume = 0.15f;
+      Music.GetComponent<AudioSource>().volume = BgmVolume;
+      SaveSettings();
       this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
     }
   }
@@ -144,21 +180,20 @@ public class OptionManager : MonoBehaviour
     {
       isSePlaying = false;
       playButtonSound();
+      SaveSettings();
       this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
     }
     else
     {
       isSePlaying = true;
       playButtonSound();
+      SaveSettings();
       this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
     }
   }
 
   public void playButtonSound()
   {
-    if (isSePlaying == true)
-    {
-      AudioSource.PlayClipAtPoint(ButtonSound, GameObject.Find("Main Camera").transform.position);
-    }
+    SoundEffects.Play(Sfx.Button);
   }
 }
