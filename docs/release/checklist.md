@@ -39,7 +39,7 @@ AdMob のIDができたら `Assets/Scripts/AdUnits.cs` と、Unity の `Assets >
 - プライバシーポリシー: 今の https://hiroto-terai.github.io/BreakingMonsters/ は AdMob の記載がないので、`docs/release/privacy-policy.md` の内容に差し替える
 - スクリーンショット
   - App Store: iPhone 6.9インチ（1320×2868 など）を最低1枚、最大10枚
-  - Google Play: スマホ用を2〜8枚、フィーチャーグラフィック 1024×500、アイコン 512×512
+  - Google Play: スマホ用を2〜8枚、フィーチャーグラフィック 1024×500（`docs/release/store-assets/feature_graphic_1024x500.png`。ゲームと同じドット絵とフォントで作成）、アイコン 512×512（`docs/release/store-assets/play_icon_512.png`。`python3 -I Tools/PixelArt/icon.py` で作り直せる）
 - 年齢レーティング: 両ストアのアンケートに答える（暴力表現は「軽いファンタジーの戦い」、広告あり、課金なし）
 - データの扱い（Google Play の「データ セーフティ」/ App Store の「App のプライバシー」）: 自分では何も集めていないが、AdMob が広告ID・おおよその位置（IPアドレスから）・利用状況・クラッシュ情報を集める。Google の公式ガイドに沿って回答する
   - https://developers.google.com/admob/android/privacy/play-data-disclosure
@@ -50,4 +50,6 @@ AdMob のIDができたら `Assets/Scripts/AdUnits.cs` と、Unity の `Assets >
 - バージョン 2.0.0（Android の versionCode 1 / iOS の build 1）
 - Android: パッケージ名 `com.hiro08051610.BreakingMonsters`、IL2CPP、ARM64 + ARMv7、target API 36、AAB 出力、縦長画面で黒帯なし
 - 広告: Google Mobile Ads 11.5.0、リワード広告（全滅時の「ふっかつ」1ステージ1回・結果画面の「コイン2倍」）
+- アイコン: iPhone の全サイズと、Android のふつう・丸・アダプティブ（`Tools/PixelArt/icon.py` で書き出し）
+- アプリ名: 日本語の Android 端末ではホーム画面に「ブレイクモンスターズ」と出る（`Assets/Plugins/Android/JapaneseAppName.androidlib`）。iPhone はまだ英語名のまま
 - Android の AAB と APK のビルドが通ることを確認済み（Pixel 10a で起動を確認）

@@ -6,13 +6,13 @@ using UnityEngine.UI;
 // スキルツリー画面：コインを使ってパッシブスキルを解放・強化する
 public class SkillTreeScreen
 {
-  const float ColumnWidth = 420f;
-  const float NodeWidth = 390f;
-  const float NodeHeight = 420f;
-  const float TierGap = 120f;
-  const float TreeTopY = 560f;
-  const float IconScale = 12f;
-  const float LinkWidth = 18f;
+  const float ColumnWidth = 410f;
+  const float NodeWidth = 380f;
+  const float NodeHeight = 320f;
+  const float TierGap = 70f;
+  const float TreeTopY = 520f;
+  const float IconScale = 8f;
+  const float LinkWidth = 14f;
 
   readonly RectTransform root;
   readonly Action onClose;
@@ -26,26 +26,26 @@ public class SkillTreeScreen
     var background = PixelUI.CreateDimmer(root, 1f);
     background.color = PixelArt.Navy;
 
-    var title = PixelUI.CreateText(root, "スキルツリー", PixelUI.LargeFont, PixelArt.LightBlue);
-    PixelUI.Place(title.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0f, TreeTopY + 330f), new Vector2(900f, 100f));
-    var coinIcon = PixelUI.CreateIcon(root, "coin", 6f);
-    PixelUI.Place(coinIcon.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(-120f, TreeTopY + 230f), coinIcon.rectTransform.sizeDelta);
-    coinText = PixelUI.CreateText(root, "", PixelUI.MediumFont, PixelArt.Yellow, TextAnchor.MiddleLeft);
-    PixelUI.Place(coinText.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(60f, TreeTopY + 230f), new Vector2(300f, 80f));
+    var title = PixelUI.CreateText(root, "スキルツリー", PixelUI.MediumFont, PixelArt.LightBlue);
+    PixelUI.Place(title.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0f, TreeTopY + 260f), new Vector2(900f, 90f));
+    var coinIcon = PixelUI.CreateIcon(root, "coin", 5f);
+    PixelUI.Place(coinIcon.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(-100f, TreeTopY + 180f), coinIcon.rectTransform.sizeDelta);
+    coinText = PixelUI.CreateText(root, "", PixelUI.SmallFont, PixelArt.Yellow, TextAnchor.MiddleLeft);
+    PixelUI.Place(coinText.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(60f, TreeTopY + 180f), new Vector2(300f, 70f));
 
     for (int branch = 0; branch < SkillTree.BranchNames.Length; branch++)
     {
       float x = (branch - 1) * ColumnWidth;
-      var branchName = PixelUI.CreateText(root, SkillTree.BranchNames[branch], PixelUI.MediumFont, PixelArt.Pale);
-      PixelUI.Place(branchName.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(x, TreeTopY + 110f), new Vector2(ColumnWidth, 80f));
+      var branchName = PixelUI.CreateText(root, SkillTree.BranchNames[branch], PixelUI.SmallFont, PixelArt.Pale);
+      PixelUI.Place(branchName.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(x, TreeTopY + 70f), new Vector2(ColumnWidth, 60f));
     }
     foreach (var skill in SkillTree.All)
     {
       CreateNode(skill);
     }
 
-    var close = PixelUI.CreateButton(root, "とじる", PixelUI.LargeFont, PixelArt.Teal, Close);
-    PixelUI.Place((RectTransform)close.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, TreeTopY - 3 * (NodeHeight + TierGap) - 60f), new Vector2(600f, 150f));
+    var close = PixelUI.CreateButton(root, "とじる", PixelUI.MediumFont, PixelArt.Teal, Close);
+    PixelUI.Place((RectTransform)close.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, TreeTopY - 3 * (NodeHeight + TierGap) - 30f), new Vector2(480f, 110f));
     Refresh();
   }
 
@@ -73,15 +73,15 @@ public class SkillTreeScreen
     var nodeImage = node.GetComponent<Image>();
 
     var icon = PixelUI.CreateIcon(rect, skill.Icon, IconScale);
-    PixelUI.Place(icon.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, -85f), icon.rectTransform.sizeDelta);
+    PixelUI.Place(icon.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, -60f), icon.rectTransform.sizeDelta);
     var name = PixelUI.CreateText(rect, skill.Name, PixelUI.SmallFont, PixelArt.White);
-    PixelUI.Place(name.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, -190f), new Vector2(NodeWidth - 20f, 50f));
-    var description = PixelUI.CreateText(rect, skill.Description, 24, PixelArt.Pale);
-    PixelUI.Place(description.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, -255f), new Vector2(NodeWidth - 30f, 70f));
+    PixelUI.Place(name.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, -135f), new Vector2(NodeWidth - 20f, 46f));
+    var description = PixelUI.CreateText(rect, skill.Description, PixelUI.SmallFont, PixelArt.Pale);
+    PixelUI.Place(description.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, -185f), new Vector2(NodeWidth - 30f, 56f));
     var status = PixelUI.CreateText(rect, "", PixelUI.SmallFont, PixelArt.Yellow);
-    PixelUI.Place(status.rectTransform, new Vector2(0.5f, 0f), new Vector2(0f, 50f), new Vector2(NodeWidth - 20f, 60f));
-    var lockIcon = PixelUI.CreateIcon(rect, "lock", 8f);
-    PixelUI.Place(lockIcon.rectTransform, new Vector2(1f, 1f), new Vector2(-50f, -50f), lockIcon.rectTransform.sizeDelta);
+    PixelUI.Place(status.rectTransform, new Vector2(0.5f, 0f), new Vector2(0f, 34f), new Vector2(NodeWidth - 20f, 46f));
+    var lockIcon = PixelUI.CreateIcon(rect, "lock", 6f);
+    PixelUI.Place(lockIcon.rectTransform, new Vector2(1f, 1f), new Vector2(-40f, -40f), lockIcon.rectTransform.sizeDelta);
 
     refreshers.Add(() =>
     {
@@ -105,7 +105,10 @@ public class SkillTreeScreen
 
   void LevelUp(SkillDefinition skill)
   {
-    SkillTree.TryLevelUp(skill);
+    if (SkillTree.TryLevelUp(skill))
+    {
+      SoundEffects.Play(Sfx.UpgradePick);
+    }
     Refresh();
   }
 

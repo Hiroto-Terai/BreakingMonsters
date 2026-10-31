@@ -45,16 +45,23 @@ public static class PixelArt
       case 'g': return Green;
       case 'a': return Gray;
       case 'k': return Black;
-      // ボス用の陰影・王冠の色
-      case 'K': return new Color32(10, 20, 32, 255);
-      case '1': return new Color32(22, 50, 64, 255);
-      case '2': return new Color32(40, 86, 104, 255);
-      case '3': return new Color32(70, 128, 146, 255);
+      // ボス用の陰影・王冠の色（体はふつうの敵スライムと同じ青。Tools/PixelArt/sprites.py の normal と合わせる）
+      case 'K': return new Color32(16, 20, 58, 255);
+      case '1': return new Color32(40, 86, 180, 255);
+      case '2': return new Color32(70, 140, 240, 255);
+      case '3': return new Color32(130, 195, 255, 255);
       case 'P': return new Color32(255, 140, 160, 255);
       case 'q': return new Color32(255, 190, 200, 255);
       case 'Y': return new Color32(255, 236, 140, 255);
       case 'G': return new Color32(250, 190, 60, 255);
       case 'O': return new Color32(170, 100, 30, 255);
+      // フィールドのふち（外側が暗く、内側が明るい段差）
+      case 'v': return new Color32(38, 16, 70, 255);
+      case 'V': return new Color32(160, 120, 235, 255);
+      // 床の模様。下の背景の色（フィーバー中は赤）が透けて見えるよう、半透明の影と光で描く
+      case 'z': return new Color32(0, 0, 0, 60);
+      case 'x': return new Color32(0, 0, 0, 35);
+      case 'Z': return new Color32(255, 255, 255, 12);
       default: return Clear;
     }
   }
@@ -94,6 +101,16 @@ public static class PixelArt
     {
       var texture = MakeTexture(Shapes.Get(key));
       return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), pivot, WorldPixelsPerUnit);
+    });
+  }
+
+  // 敷きつめて使う模様（SpriteRenderer の Tiled 表示は、四角いままのメッシュでないと正しく並ばない）
+  public static Sprite TiledWorldSprite(string key)
+  {
+    return Get("tiled_" + key, () =>
+    {
+      var texture = MakeTexture(Shapes.Get(key));
+      return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), WorldPixelsPerUnit, 0, SpriteMeshType.FullRect);
     });
   }
 

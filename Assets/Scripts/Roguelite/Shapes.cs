@@ -8,6 +8,46 @@ public static class Shapes
     // 1ドット（破片や残像に使う）
     ["dot"] = new[] { "w" },
 
+    // フィールドのふち。縦は右側、横は下側がフィールドに面する（反対側は反転して使う）。8ドットごとに継ぎ目を入れる
+    ["frame_vertical"] = new[]
+    {
+      "vuV",
+      "vuV",
+      "vuV",
+      "vuV",
+      "vuV",
+      "vuV",
+      "vuV",
+      "vvv",
+    },
+    ["frame_horizontal"] = new[]
+    {
+      "vvvvvvvv",
+      "uuuuuuuv",
+      "VVVVVVVv",
+    },
+
+    // フィールドの床：石を互い違いに並べた模様（z=目地 Z=石のふちの光 x=小さな傷）。敷きつめて使う
+    ["floor_tile"] = new[]
+    {
+      "zzzzzzzzzzzzzzzz",
+      "zZZZZZZZzZZZZZZZ",
+      "zZ......zZ......",
+      "zZ......zZ...x..",
+      "zZ......zZ......",
+      "zZ..x...zZ......",
+      "zZ......zZ......",
+      "zZ......zZ......",
+      "zzzzzzzzzzzzzzzz",
+      "ZZZZzZZZZZZZzZZZ",
+      "....zZ......zZ..",
+      "....zZ......zZ..",
+      "..x.zZ......zZ..",
+      "....zZ...x..zZ..",
+      "....zZ......zZ..",
+      "....zZ......zZ..",
+    },
+
     // ボス：王冠をかぶった大きなスライム（2コマで ぷるぷる動く。Tools/PixelArt/boss.py で陰影を付けて生成）
     ["boss"] = new[]
     {
@@ -373,6 +413,205 @@ public static class Shapes
       "...bbbb...",
       "..........",
     },
+    // 新しい強化と進化のアイコン（10x10）
+    ["icon_split"] = new[]
+    {
+      "..........",
+      "...bbb....",
+      "..bwbbb...",
+      "..bbbbb...",
+      "...bbb....",
+      ".b.....b..",
+      "bwb...bwb.",
+      ".b.....b..",
+      "..........",
+      "..........",
+    },
+    ["icon_shot"] = new[]
+    {
+      "....y.....",
+      "....y.....",
+      "..y.w.y...",
+      "..y.y.y...",
+      "..w...w...",
+      "..........",
+      ".pppppppp.",
+      ".ptttttttp",
+      ".pppppppp.",
+      "..........",
+    },
+    ["icon_pierce"] = new[]
+    {
+      "........w.",
+      ".......wb.",
+      "..tt..wb..",
+      ".tttwwb...",
+      ".tttbb....",
+      "..twbt....",
+      "..wbtt....",
+      ".wb.......",
+      "wb........",
+      "..........",
+    },
+    ["icon_explosion"] = new[]
+    {
+      "...r..r...",
+      ".r.roor.r.",
+      "..rooyor..",
+      "rrooyyoorr",
+      ".royywyor.",
+      ".royyyyor.",
+      "rrooyyoorr",
+      "..roooor..",
+      ".r.r..r.r.",
+      "..........",
+    },
+    ["icon_chain"] = new[]
+    {
+      ".....yy...",
+      "....yy....",
+      "...yy.....",
+      "..yyyyy...",
+      "....yy....",
+      "...yy.....",
+      "..yy......",
+      ".yy.......",
+      "y.........",
+      "..........",
+    },
+    ["icon_storm"] = new[]
+    {
+      ".b..y..b..",
+      "bwb...bwb.",
+      ".b.bbb.b..",
+      "..bwbbb...",
+      "y.bbbbb.y.",
+      "...bbb....",
+      ".b..y..b..",
+      "bwb...bwb.",
+      ".b.....b..",
+      "..........",
+    },
+    ["icon_meteor"] = new[]
+    {
+      "r.........",
+      ".ro.......",
+      "..roo.....",
+      "...ooyy...",
+      "...oyyyy..",
+      "....yywyy.",
+      "....yywwy.",
+      ".....yyyy.",
+      "......yy..",
+      "..........",
+    },
+    ["icon_bigbang"] = new[]
+    {
+      "y...w...y.",
+      ".y.rrr.y..",
+      "..rooor...",
+      "wroywyorw.",
+      ".roywwyor.",
+      "wroywyorw.",
+      "..rooor...",
+      ".y.rrr.y..",
+      "y...w...y.",
+      "..........",
+    },
+    ["icon_thunderstorm"] = new[]
+    {
+      ".aaaaaaa..",
+      "aaapppaaa.",
+      ".aaaaaaa..",
+      "..y..y..y.",
+      ".yy.yy.yy.",
+      "..y..y..y.",
+      ".y..y..y..",
+      "y..y..y...",
+      "..........",
+      "..........",
+    },
+    ["icon_gigapaddle"] = new[]
+    {
+      "....rr....",
+      "....rr....",
+      "....rr....",
+      "....rr....",
+      "...rwwr...",
+      "pppppppppp",
+      "ptttttwttp",
+      "ptttttttwp",
+      "pppppppppp",
+      "..........",
+    },
+    ["icon_chest"] = new[]
+    {
+      "..........",
+      ".OOOOOOOO.",
+      "OGGGGGGGGO",
+      "OGGGGGGGGO",
+      "OOOOyyOOOO",
+      "OGGGywGGGO",
+      "OGGGGGGGGO",
+      "OGGGGGGGGO",
+      "OOOOOOOOOO",
+      "..........",
+    },
+
+    // 経験値のジェム（倒したモンスターから出て、バーに吸い寄せられる）
+    ["gem"] = new[]
+    {
+      "..g..",
+      ".gwg.",
+      "gwggg",
+      ".ggg.",
+      "..g..",
+    },
+    // 本物のボール（仲間を守るボール）のまわりの輪。ボールが増えても見失わないようにする
+    ["main_ball_ring"] = new[]
+    {
+      "......wwwww......",
+      "....ww.....ww....",
+      "...w.........w...",
+      "..w...........w..",
+      ".w.............w.",
+      ".w.............w.",
+      "w...............w",
+      "w...............w",
+      "w...............w",
+      "w...............w",
+      "w...............w",
+      ".w.............w.",
+      ".w.............w.",
+      "..w...........w..",
+      "...w.........w...",
+      "....ww.....ww....",
+      "......wwwww......",
+    },
+    // バーから撃つ弾
+    ["player_bullet"] = new[]
+    {
+      "w",
+      "y",
+      "y",
+      "o",
+    },
+    // ギガバーのレーザー（縦に伸ばして使う）
+    ["laser"] = new[]
+    {
+      "rowwor",
+    },
+    // ダメージの数字（3x5ドット）
+    ["digit_0"] = new[] { "www", "w.w", "w.w", "w.w", "www" },
+    ["digit_1"] = new[] { ".w.", "ww.", ".w.", ".w.", "www" },
+    ["digit_2"] = new[] { "www", "..w", "www", "w..", "www" },
+    ["digit_3"] = new[] { "www", "..w", ".ww", "..w", "www" },
+    ["digit_4"] = new[] { "w.w", "w.w", "www", "..w", "..w" },
+    ["digit_5"] = new[] { "www", "w..", "www", "..w", "www" },
+    ["digit_6"] = new[] { "www", "w..", "www", "w.w", "www" },
+    ["digit_7"] = new[] { "www", "..w", "..w", ".w.", ".w." },
+    ["digit_8"] = new[] { "www", "w.w", "www", "w.w", "www" },
+    ["digit_9"] = new[] { "www", "w.w", "www", "..w", "www" },
   };
 
   public static string[] Get(string key)

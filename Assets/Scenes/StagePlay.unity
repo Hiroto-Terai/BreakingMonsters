@@ -439,7 +439,7 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
-  - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -455,23 +455,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
---- !u!114 &519420030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c32fa01a27d5486a8ba36fdcfd10899, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _baseType: 0
-  _baseWidth: 550
-  _baseHeight: 100
-  _pixelPerUnit: 100
-  _isAlwaysUpdate: 0
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -507,7 +490,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 9.158898
+  orthographic size: 0.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -538,6 +521,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 618ac2c705edc4539b6b604e6fe47cd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayfieldCamera
 --- !u!1 &554187900
 GameObject:
   m_ObjectHideFlags: 0
@@ -961,7 +956,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: f3b0a8eee5df04c95ac551941dfd79ac, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1078,7 +1073,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: f3b0a8eee5df04c95ac551941dfd79ac, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1514,8 +1509,6 @@ MonoBehaviour:
   speed: 5
   minSpeed: 5
   maxSpeed: 10
-  PlayerColSound: {fileID: 8300000, guid: 7eaf0020508a4429da1b0fd8b80dfc6c, type: 3}
-  EnemyColSound: {fileID: 8300000, guid: 7eaf0020508a4429da1b0fd8b80dfc6c, type: 3}
 --- !u!50 &1172171255
 Rigidbody2D:
   serializedVersion: 5
@@ -2643,7 +2636,7 @@ PrefabInstance:
     - target: {fileID: 1215801777361369881, guid: 756479f7a93234ba4a7caddd884988a1,
         type: 3}
       propertyPath: m_SortingOrder
-      value: 0
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 1215801777505265754, guid: 756479f7a93234ba4a7caddd884988a1,
         type: 3}
@@ -2744,7 +2737,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: f3b0a8eee5df04c95ac551941dfd79ac, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2922,7 +2915,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: f3b0a8eee5df04c95ac551941dfd79ac, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

@@ -60,6 +60,8 @@ public class VersusController : MonoBehaviour
     sceneChanger = FindSceneChanger();
     labelCanvas = PixelUI.CreateOverlayCanvas("VersusLabels", LabelSortingOrder);
     modalCanvas = PixelUI.CreateOverlayCanvas("ModalCanvas", ModalSortingOrder);
+    FieldFloor.CreateOnField();
+    FieldFrame.Create();
 
     // 上下の壁の内側の真ん中を基準に、上側を下側と線対称に並べる
     float topInner = GameObject.Find("wallTop").GetComponent<Collider2D>().bounds.min.y;

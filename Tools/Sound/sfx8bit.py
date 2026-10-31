@@ -14,7 +14,8 @@ FADE_SECONDS = 0.002
 MAX_INT16 = 32767
 NOISE_SEED = 20240601
 TRIANGLE_LEVELS = 16  # ファミコンの三角波は4bit階段波で、そのザラつきが8bit感の元になる
-OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "Assets", "Music", "SE")
+# ゲームから名前で読み込めるよう Resources の下に置く
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "Assets", "Resources", "SE")
 
 DUTY_12 = 0.125
 DUTY_25 = 0.25
@@ -323,6 +324,69 @@ def build_button():
     return mix(n, [(click, 0.7, 0), (tick, 0.4, 0)])
 
 
+def build_explosion():
+    n = sample_count(0.350)
+    boom = voice(TRIANGLE, freq_sweep(160, 30, n), 0.001, 0.2)
+    blast = multiply(noise(n, 5, new_rng()), envelope(n, 0.0, 0.12))
+    crack = multiply(noise(n, 1, new_rng()), envelope(n, 0.0, 0.02))
+    return mix(n, [(boom, 0.7, 0), (blast, 0.6, 0), (crack, 0.3, 0)])
+
+
+def build_gem():
+    n = sample_count(0.070)
+    return voice(PULSE, freq_sweep(1800, 2600, n), 0.001, 0.035, DUTY_12)
+
+
+def build_level_up():
+    n = sample_count(0.700)
+    notes = [(72, 0.06), (76, 0.06), (79, 0.06), (84, 0.06), (88, 0.06), (91, 0.06), (96, 0.34)]
+    lead = note_sequence(notes, PULSE, DUTY_25, 0.001, 0.12)
+    shine = note_sequence([(m + 12, d) for m, d in notes], TRIANGLE, DUTY_50, 0.001, 0.1)
+    bass = note_sequence([(48, 0.36), (55, 0.34)], TRIANGLE, DUTY_50, 0.002, 0.3)
+    return mix(n, [(lead, 0.6, 0), (shine, 0.25, 0), (bass, 0.4, 0)])
+
+
+def build_evolve():
+    n = sample_count(1.300)
+    rise = voice(PULSE, freq_sweep(200, 1600, sample_count(0.5)), 0.05, 0.6, DUTY_12)
+    layers = [(rise, 0.45, 0)]
+    for index, midi in enumerate((72, 76, 79, 84)):
+        offset = sample_count(0.5 + 0.04 * index)
+        bell = voice(PULSE, freq_constant(midi_to_hz(midi), n - offset), 0.002, 0.35, DUTY_25)
+        layers.append((bell, 0.3, offset))
+    boom = voice(TRIANGLE, freq_sweep(120, 40, n), 0.001, 0.25)
+    layers.append((boom, 0.5, sample_count(0.5)))
+    return mix(n, layers)
+
+
+def build_fever():
+    n = sample_count(0.900)
+    notes = [(m, 0.05) for m in (60, 64, 67, 72, 64, 67, 72, 76, 67, 72, 76, 79, 72, 76, 79, 84)]
+    lead = note_sequence(notes, PULSE, DUTY_12, 0.001, 0.05)
+    bass = voice(TRIANGLE, freq_sweep(midi_to_hz(36), midi_to_hz(48), n), 0.01, 0.6)
+    return mix(n, [(lead, 0.65, 0), (bass, 0.45, 0)])
+
+
+def build_chest_open():
+    n = sample_count(0.600)
+    creak = voice(PULSE, freq_sweep(200, 420, sample_count(0.15)), 0.01, 0.08, DUTY_25)
+    sparkle = note_sequence([(m, 0.05) for m in (84, 88, 91, 96, 100, 103)] + [(108, 0.15)], TRIANGLE, DUTY_50, 0.001, 0.06)
+    return mix(n, [(creak, 0.5, 0), (sparkle, 0.6, sample_count(0.15))])
+
+
+def build_shot():
+    n = sample_count(0.060)
+    return voice(PULSE, freq_sweep(1200, 600, n), 0.001, 0.03, DUTY_12)
+
+
+def build_crit():
+    n = sample_count(0.180)
+    hit = voice(PULSE, freq_sweep(1400, 200, n), 0.001, 0.08, DUTY_25)
+    ring = voice(TRIANGLE, freq_constant(midi_to_hz(96), n), 0.001, 0.1)
+    snap = multiply(noise(n, 1, new_rng()), envelope(n, 0.0, 0.015))
+    return mix(n, [(hit, 0.5, 0), (ring, 0.35, 0), (snap, 0.4, 0)])
+
+
 SOUNDS = {
     "paddle_hit": build_paddle_hit,
     "wall_hit": build_wall_hit,
@@ -347,6 +411,14 @@ SOUNDS = {
     "tutorial_ok": build_tutorial_ok,
     "revive": build_revive,
     "button": build_button,
+    "explosion": build_explosion,
+    "gem": build_gem,
+    "level_up": build_level_up,
+    "evolve": build_evolve,
+    "fever": build_fever,
+    "chest_open": build_chest_open,
+    "shot": build_shot,
+    "crit": build_crit,
 }
 
 

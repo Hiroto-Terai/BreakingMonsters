@@ -16,6 +16,8 @@ public class Boss : MonoBehaviour
   const float InvincibleSeconds = 0.12f;
   float invincibleUntil;
   const float ShotOffsetY = 0.1f;
+  const float NumberOffsetY = 1.2f;
+  const int BigNumberDamage = 5;
 
   public int Hp { get; private set; }
   public int MaxHp { get; private set; }
@@ -71,6 +73,7 @@ public class Boss : MonoBehaviour
     {
       shotTimer = floor.BossShotInterval;
       BossBullet.Fire(transform.position + Vector3.down * ShotOffsetY, floor.BulletSpeed);
+      SoundEffects.Play(Sfx.BossShoot);
     }
   }
 
@@ -82,8 +85,21 @@ public class Boss : MonoBehaviour
       return;
     }
     invincibleUntil = Time.time + InvincibleSeconds;
-    Hp -= StageRunController.Instance.OnBallHitBoss(ball);
     HitEffects.Burst(collision.GetContact(0).point, PixelArt.LightBlue);
+    TakeDamage(StageRunController.Instance.OnBallHitBoss(ball));
+  }
+
+  // ボール・弾・レーザー・爆発のどれでも、ここでHPを減らす
+  public void TakeDamage(int damage)
+  {
+    if (isDead)
+    {
+      return;
+    }
+    Hp -= damage;
+    SoundEffects.Play(Sfx.BossHit);
+    DamageNumbers.Spawn(transform.position + Vector3.up * NumberOffsetY, damage, PixelArt.Orange, damage >= BigNumberDamage);
+    StageRunController.Instance.OnBossDamaged();
     if (Hp <= 0)
     {
       isDead = true;

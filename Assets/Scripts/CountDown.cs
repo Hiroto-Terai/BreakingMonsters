@@ -21,10 +21,19 @@ public class CountDown : MonoBehaviour
     Restart();
   }
 
+  const float FullCountdownStart = 4f;
+
   // 3, 2, 1, GO! を最初からやり直す（階層が変わるたびに使う）
   public void Restart()
   {
-    countdown = 4f;
+    Restart(FullCountdownStart);
+  }
+
+  // startValue が 4 なら「3,2,1」、2.5 なら「2,1」と短くなる
+  public void Restart(float startValue)
+  {
+    countdown = startValue;
+    count = 0;
     goTimer = 0f;
     IsFinished = false;
   }
@@ -52,10 +61,18 @@ public class CountDown : MonoBehaviour
       IsFinished = true;
       goTimer = GoDisplaySeconds;
       CountText.text = "GO!";
+      SoundEffects.Play(Sfx.CountdownGo);
       Time.timeScale = 1f;
       return;
     }
-    count = (int)countdown;
+    // 始まった瞬間（4.0）や一時停止中でも「4」を出さないよう、残り秒数を切り上げて数える
+    int nextCount = Mathf.CeilToInt(countdown - 1f);
+    // 数字が変わった瞬間だけ鳴らす
+    if (nextCount != count)
+    {
+      SoundEffects.Play(Sfx.Countdown);
+    }
+    count = nextCount;
     CountText.text = count.ToString();
   }
 }

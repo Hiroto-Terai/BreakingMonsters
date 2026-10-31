@@ -12,8 +12,6 @@ public class BallManager : MonoBehaviour
   // 速さの最大値を指定する変数を追加
   public float maxSpeed = 10f;
   Rigidbody2D myRigidbody2d;
-  public AudioClip PlayerColSound;
-  public AudioClip EnemyColSound;
   // ボールの色を取得(透明化のため)
   SpriteRenderer spriteRenderer;
 
@@ -63,6 +61,26 @@ public class BallManager : MonoBehaviour
 
   // 次にモンスターへ当たったとき +1 ダメージになる
   public bool IsSmashCharged { get; private set; }
+  // 強化で増えたボールやミニボールは仲間スライムを傷つけない
+  public bool CanHurtLives { get; set; } = true;
+  // ぶんれつで出たミニボール。しばらくすると消える
+  public bool IsMini { get; private set; }
+  const float MiniLifeSeconds = 6f;
+  const float MiniBlinkSeconds = 1f;
+  const float MiniScale = 0.6f;
+  float miniAge;
+  // つらぬき：打ち返してから、あと何体つらぬけるか
+  int pierceLeft;
+  // 倒して突き抜けるとき、ぶつかる前の速度に戻すため次の物理更新で使う
+  bool shouldRestoreVelocity;
+  // 進化「メテオ」：スマッシュしてからしばらく、ぜんぶ突き抜けてダメージ3倍
+  const float MeteorSeconds = 2.5f;
+  const float MeteorScale = 1.35f;
+  float meteorTimer;
+  public bool IsMeteor => meteorTimer > 0f;
+  // フィーバー中はボールが燃えて見える
+  public static bool IsFeverActive;
+  static readonly Color SubBallTint = new Color(0.55f, 0.8f, 1f, 1f);
   // 倒したモンスターから受け取った属性
   public Element LoadedElement { get; set; }
 
@@ -90,7 +108,33 @@ public class BallManager : MonoBehaviour
     ghostTimer = -1f;
     IsSmashCharged = false;
     LoadedElement = Element.None;
+    pierceLeft = 0;
+    meteorTimer = 0f;
+    shouldRestoreVelocity = false;
     EndBig();
+  }
+
+  // ぶんれつで出るミニボールにする（小さく、仲間を傷つけず、しばらくすると消える）
+  public void MakeMini()
+  {
+    IsMini = true;
+    CanHurtLives = false;
+    transform.localScale *= MiniScale;
+    miniAge = 0f;
+  }
+
+  // モンスターを倒した直後に呼ばれる。つらぬける間は、跳ね返らずにそのまま進む
+  public void OnKilledMonster()
+  {
+    if (IsMeteor)
+    {
+      shouldRestoreVelocity = true;
+    }
+    else if (pierceLeft > 0)
+    {
+      pierceLeft--;
+      shouldRestoreVelocity = true;
+    }
   }
 
   // スマッシュの+1ダメージを使い切る
@@ -103,19 +147,64 @@ public class BallManager : MonoBehaviour
 
   void FixedUpdate()
   {
+    if (shouldRestoreVelocity)
+    {
+      myRigidbody2d.linearVelocity = velocityBeforeCollision;
+      shouldRestoreVelocity = false;
+    }
     // カーブ：横向きの力を少しずつ弱めながらかけ続ける
     if (spin != 0f && IsMoving)
     {
       myRigidbody2d.linearVelocity += Vector2.right * spin * Time.fixedDeltaTime;
       spin = Mathf.MoveTowards(spin, 0f, SpinDecayPerSecond * Time.fixedDeltaTime);
     }
+    HomeTowardLastMonsters();
     velocityBeforeCollision = myRigidbody2d.linearVelocity;
+  }
+
+  // 敵側へ飛んでいるあいだ、残り少ないモンスターへ向けて少しずつ曲げる
+  const float HomingDegreesPerSecond = 70f;
+
+  void HomeTowardLastMonsters()
+  {
+    var controller = StageRunController.Instance;
+    Vector2 velocity = myRigidbody2d.linearVelocity;
+    if (controller == null || velocity.y <= 0f)
+    {
+      return;
+    }
+    var target = controller.FindHomingTarget(transform.position);
+    if (target == null)
+    {
+      return;
+    }
+    Vector2 toTarget = (Vector2)(target.position - transform.position);
+    float maxRadians = HomingDegreesPerSecond * Mathf.Deg2Rad * Time.fixedDeltaTime;
+    Vector3 turned = Vector3.RotateTowards(velocity, toTarget.normalized * velocity.magnitude, maxRadians, 0f);
+    myRigidbody2d.linearVelocity = turned;
   }
 
   // Update is called once per frame
   void Update()
   {
     smashTimer -= Time.deltaTime;
+    if (meteorTimer > 0f)
+    {
+      meteorTimer -= Time.deltaTime;
+      if (meteorTimer <= 0f)
+      {
+        EndBig();
+      }
+    }
+    if (IsMini)
+    {
+      miniAge += Time.deltaTime;
+      if (miniAge >= MiniLifeSeconds)
+      {
+        Destroy(gameObject);
+        return;
+      }
+    }
     UpdateVisibility();
 
     // 速度チェック
@@ -143,9 +232,10 @@ public class BallManager : MonoBehaviour
   {
     get
     {
+      if (IsMeteor || IsFeverActive) return PixelArt.Orange;
       if (LoadedElement != Element.None) return Elements.ColorOf(LoadedElement);
       if (smashTimer > 0f) return PixelArt.Yellow;
-      return PixelArt.LightBlue;
+      return IsMini ? PixelArt.Pale : PixelArt.LightBlue;
     }
   }
 
@@ -165,7 +255,15 @@ public class BallManager : MonoBehaviour
         ghostTimer = -1f;
       }
     }
-    Color tint = LoadedElement != Element.None ? Elements.ColorOf(LoadedElement) : Color.white;
+    // ミニボールは消える前に点滅して知らせる
+    if (IsMini && miniAge > MiniLifeSeconds - MiniBlinkSeconds && Mathf.FloorToInt(miniAge * 10f) % 2 == 0)
+    {
+      alpha *= 0.3f;
+    }
+    // 仲間を傷つけないボール（増えたボール・ミニボール）は水色にして、本物のボールと見分けられるようにする
+    Color tint = CanHurtLives ? Color.white : SubBallTint;
+    if (IsMeteor || IsFeverActive) tint = PixelArt.Orange;
+    else if (LoadedElement != Element.None) tint = Elements.ColorOf(LoadedElement);
     spriteRenderer.color = new Color(tint.r, tint.g, tint.b, alpha);
   }
 
@@ -214,6 +312,10 @@ public class BallManager : MonoBehaviour
     {
       HitByPaddle(paddle);
     }
+    else if (collision.gameObject.GetComponent<EnemyManager>() == null && collision.gameObject.GetComponent<Boss>() == null)
+    {
+      SoundEffects.Play(Sfx.WallHit);
+    }
   }
 
   void HitByPaddle(Paddle paddle)
@@ -224,11 +326,7 @@ public class BallManager : MonoBehaviour
     {
       return;
     }
-    AudioClip sound = paddle.Side == PaddleSide.Bottom ? PlayerColSound : EnemyColSound;
-    if (OptionManager.isSePlaying)
-    {
-      AudioSource.PlayClipAtPoint(sound, transform.position, 1.0f);
-    }
+    SoundEffects.Play(Sfx.PaddleHit);
 
     // バーから見たボールの方向に跳ね返す（端で当てるほど斜めに飛ぶ）
     Vector2 direction = ((Vector2)transform.position - (Vector2)paddle.transform.position).normalized;
@@ -250,6 +348,19 @@ public class BallManager : MonoBehaviour
       smashTimer = SmashSeconds;
       IsSmashCharged = true;
       newSpeed = Mathf.Min(newSpeed * SmashSpeedMultiplier, maxSpeed * SmashMaxSpeedMultiplier);
+      SoundEffects.Play(Sfx.Smash);
+      if (paddle.Side == PaddleSide.Bottom && RunState.Has(UpgradeId.Meteor) && StageRunController.Instance != null)
+      {
+        meteorTimer = MeteorSeconds;
+      }
+    }
+    else if (Mathf.Abs(spin) > 0f)
+    {
+      SoundEffects.Play(Sfx.Curve);
+    }
+    if (paddle.Side == PaddleSide.Bottom && StageRunController.Instance != null)
+    {
+      pierceLeft = RunState.PierceCount;
     }
     myRigidbody2d.linearVelocity = direction * newSpeed;
 
@@ -257,7 +368,11 @@ public class BallManager : MonoBehaviour
     ghostTimer = paddle.Character == CharacterId.Ghost ? 0f : -1f;
     if (paddle.Character == CharacterId.Big)
     {
-      StartBig();
+      StartBig(BigCharacterScale);
+    }
+    else if (IsMeteor)
+    {
+      StartBig(MeteorScale);
     }
     else
     {
@@ -266,7 +381,7 @@ public class BallManager : MonoBehaviour
 
     if (StageRunController.Instance != null)
     {
-      StageRunController.Instance.OnPaddleHit(paddle, isSmash, transform.position);
+      StageRunController.Instance.OnPaddleHit(this, paddle, isSmash, transform.position);
     }
     if (VersusController.Instance != null)
     {
@@ -288,12 +403,12 @@ public class BallManager : MonoBehaviour
     return Vector2.Lerp(natural, aim, paddle.AimStrength).normalized;
   }
 
-  void StartBig()
+  void StartBig(float scale)
   {
     if (!isBig)
     {
       normalScale = transform.localScale;
-      transform.localScale = normalScale * BigCharacterScale;
+      transform.localScale = normalScale * scale;
       isBig = true;
     }
   }

@@ -4,21 +4,24 @@ using UnityEngine.UI;
 // メニュー画面：100ステージのマップとスキルツリーへの入口
 public class StageSelectScreen : MonoBehaviour
 {
-  const int Columns = 5;
-  const float CellSize = 220f;
-  const float CellGap = 30f;
-  const float HeaderOffsetY = -330f;
-  const float ListTopOffset = -470f;
-  const float ListBottomOffset = 520f;
-  const float SkillButtonY = 360f;
-  const float StarScale = 4f;
-  const float BadgeScale = 5f;
-  const float LockScale = 8f;
+  const int Columns = 6;
+  const float CellSize = 170f;
+  const float CellGap = 22f;
+  const float HeaderHeight = 100f;
+  const float TeaserHeight = 60f;
+  const float BottomButtonHeight = 120f;
+  const float BottomMargin = 40f;
+  const float StarScale = 3f;
+  const float BadgeScale = 4f;
+  const float LockScale = 6f;
   const float FadeSeconds = 0.3f;
+  // 歯車ボタンの中心の高さ（OptionButtonPosition が左上のセーフエリアの内側に置く）
+  const float GearCenterFromSafeTop = 90f;
+  static readonly Color32 NextStageBorder = new Color32(255, 224, 102, 255);
 
-  public AudioClip ButtonSound;
   Text coinText;
   RectTransform root;
+  GameObject skillBadge;
 
   void Start()
   {
@@ -32,37 +35,87 @@ public class StageSelectScreen : MonoBehaviour
   {
     root = PixelUI.Stretch(PixelUI.CreateRect("StageSelect", canvas));
     root.SetSiblingIndex(0);
+    float unitsPerPixel = ((RectTransform)canvas).rect.height / Screen.height;
+    float safeTop = (Screen.height - Screen.safeArea.yMax) * unitsPerPixel;
+    // 下のバナーはホームバーの上（セーフエリアの下端）から上向きに出る
+    float safeBottom = Screen.safeArea.yMin * unitsPerPixel;
+    float bannerUnits = BannerLayout.HeightPixels * unitsPerPixel;
+    FieldFloor.CreateCovering(Camera.main);
+    float headerY = -(safeTop + GearCenterFromSafeTop);
 
-    var title = PixelUI.CreateText(root, "STAGE SELECT", PixelUI.LargeFont, PixelArt.LightBlue);
-    PixelUI.Place(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, HeaderOffsetY), new Vector2(900f, 100f));
+    var title = PixelUI.CreateText(root, "STAGE SELECT", PixelUI.MediumFont, PixelArt.LightBlue);
+    PixelUI.Place(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, headerY), new Vector2(700f, HeaderHeight));
+    var coinIcon = PixelUI.CreateIcon(root, "coin", 5f);
+    PixelUI.Place(coinIcon.rectTransform, new Vector2(1f, 1f), new Vector2(-260f, headerY), coinIcon.rectTransform.sizeDelta);
+    coinText = PixelUI.CreateText(root, "", PixelUI.SmallFont, PixelArt.Yellow, TextAnchor.MiddleLeft);
+    PixelUI.Place(coinText.rectTransform, new Vector2(1f, 1f), new Vector2(-120f, headerY), new Vector2(220f, HeaderHeight));
 
-    var coinIcon = PixelUI.CreateIcon(root, "coin", 6f);
-    PixelUI.Place(coinIcon.rectTransform, new Vector2(1f, 1f), new Vector2(-300f, HeaderOffsetY), coinIcon.rectTransform.sizeDelta);
-    coinText = PixelUI.CreateText(root, "", PixelUI.MediumFont, PixelArt.Yellow, TextAnchor.MiddleLeft);
-    PixelUI.Place(coinText.rectTransform, new Vector2(1f, 1f), new Vector2(-140f, HeaderOffsetY), new Vector2(240f, 90f));
+    float teaserY = headerY - HeaderHeight / 2f - TeaserHeight / 2f;
+    CreateTeaser(teaserY);
 
-    BuildStageList();
+    float buttonY = safeBottom + bannerUnits + BottomMargin + BottomButtonHeight / 2f;
+    float listTop = -teaserY + TeaserHeight / 2f + CellGap;
+    float listBottom = buttonY + BottomButtonHeight / 2f + CellGap;
+    BuildStageList(listTop, listBottom);
 
-    var skillButton = PixelUI.CreateButton(root, "スキルツリー", PixelUI.LargeFont, PixelArt.Purple, OpenSkillTree);
-    PixelUI.Place((RectTransform)skillButton.transform, new Vector2(0.5f, 0f), new Vector2(-300f, SkillButtonY), new Vector2(600f, 160f));
-    var versusButton = PixelUI.CreateButton(root, "たいせん", PixelUI.LargeFont, PixelArt.DarkRed, OpenVersus);
-    PixelUI.Place((RectTransform)versusButton.transform, new Vector2(0.5f, 0f), new Vector2(320f, SkillButtonY), new Vector2(520f, 160f));
+    var skillButton = PixelUI.CreateButton(root, "スキルツリー", PixelUI.MediumFont, PixelArt.Purple, OpenSkillTree);
+    PixelUI.Place((RectTransform)skillButton.transform, new Vector2(0.5f, 0f), new Vector2(-270f, buttonY), new Vector2(520f, BottomButtonHeight));
+    // 強化できるスキルがあるときは「!」を出して、スキルツリーを開きたくさせる
+    var badge = PixelUI.CreatePanel(skillButton.transform, PixelArt.Red, PixelArt.White);
+    PixelUI.Place(badge.rectTransform, new Vector2(1f, 1f), new Vector2(-10f, -10f), new Vector2(56f, 56f));
+    var badgeText = PixelUI.CreateText(badge.transform, "!", PixelUI.SmallFont, PixelArt.White);
+    PixelUI.Stretch(badgeText.rectTransform);
+    skillBadge = badge.gameObject;
+    var versusButton = PixelUI.CreateButton(root, "たいせん", PixelUI.MediumFont, PixelArt.DarkRed, OpenVersus);
+    PixelUI.Place((RectTransform)versusButton.transform, new Vector2(0.5f, 0f), new Vector2(290f, buttonY), new Vector2(440f, BottomButtonHeight));
     Refresh();
+  }
+
+  // 次のステージで新しく出る強化を見せて、先へ進みたくさせる
+  void CreateTeaser(float y)
+  {
+    int nextStage = Mathf.Min(Progress.HighestCleared + 1, StageDatabase.StageCount);
+    string message = "つぎは STAGE " + nextStage;
+    for (int stage = nextStage; stage <= StageDatabase.StageCount; stage++)
+    {
+      var unlock = Upgrades.NextUnlock(stage - 1);
+      if (unlock != null && stage > Progress.HighestCleared + 1)
+      {
+        message += "   STAGE " + stage + " で「" + unlock.Name + "」解放";
+        break;
+      }
+    }
+    var text = PixelUI.CreateText(root, message, PixelUI.SmallFont, PixelArt.Pale);
+    PixelUI.Place(text.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(1200f, TeaserHeight));
   }
 
   public void Refresh()
   {
     coinText.text = Progress.Coins.ToString();
+    skillBadge.SetActive(CanAffordAnySkill());
   }
 
-  void BuildStageList()
+  static bool CanAffordAnySkill()
+  {
+    foreach (var skill in SkillTree.All)
+    {
+      int cost = SkillTree.NextCost(skill);
+      if (cost >= 0 && SkillTree.IsUnlocked(skill) && Progress.Coins >= cost)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void BuildStageList(float topOffset, float bottomOffset)
   {
     // スクロールできる枠
     var viewport = PixelUI.CreateRect("StageList", root);
     viewport.anchorMin = new Vector2(0f, 0f);
     viewport.anchorMax = new Vector2(1f, 1f);
-    viewport.offsetMin = new Vector2(0f, ListBottomOffset);
-    viewport.offsetMax = new Vector2(0f, ListTopOffset);
+    viewport.offsetMin = new Vector2(0f, bottomOffset);
+    viewport.offsetMax = new Vector2(0f, -topOffset);
     viewport.gameObject.AddComponent<RectMask2D>();
     viewport.gameObject.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0f);
 
@@ -79,18 +132,18 @@ public class StageSelectScreen : MonoBehaviour
     scroll.movementType = ScrollRect.MovementType.Clamped;
     scroll.scrollSensitivity = 40f;
 
+    int nextStage = Mathf.Min(Progress.HighestCleared + 1, StageDatabase.StageCount);
     for (int stage = 1; stage <= StageDatabase.StageCount; stage++)
     {
-      CreateStageCell(content, stage);
+      CreateStageCell(content, stage, stage == nextStage);
     }
 
     // 次に遊ぶステージが見える位置までスクロールしておく
-    int nextStage = Mathf.Min(Progress.HighestCleared + 1, StageDatabase.StageCount);
     int nextRow = (nextStage - 1) / Columns;
-    content.anchoredPosition = new Vector2(0f, Mathf.Max(0f, (nextRow - 1) * (CellSize + CellGap)));
+    content.anchoredPosition = new Vector2(0f, Mathf.Max(0f, (nextRow - 2) * (CellSize + CellGap)));
   }
 
-  void CreateStageCell(RectTransform content, int stage)
+  void CreateStageCell(RectTransform content, int stage, bool isNext)
   {
     int index = stage - 1;
     var position = new Vector2(
@@ -105,10 +158,26 @@ public class StageSelectScreen : MonoBehaviour
       fill = PixelArt.Gray;
     }
     int capturedStage = stage;
-    var button = PixelUI.CreateButton(content, isUnlocked ? stage.ToString() : "", PixelUI.LargeFont, fill, () => StartStage(capturedStage));
+    var button = PixelUI.CreateButton(content, isUnlocked ? stage.ToString() : "", PixelUI.MediumFont, fill, () => StartStage(capturedStage));
     button.name = "Stage_" + stage;
     button.interactable = isUnlocked;
     var rect = PixelUI.Place((RectTransform)button.transform, new Vector2(0.5f, 1f), position, new Vector2(CellSize, CellSize));
+    if (isNext)
+    {
+      // 次に遊ぶステージは黄色い枠で目立たせる
+      button.GetComponent<Image>().sprite = PixelArt.FrameSprite(fill, NextStageBorder);
+      var play = PixelUI.CreateText(rect, "▶", PixelUI.SmallFont, PixelArt.Yellow);
+      PixelUI.Place(play.rectTransform, new Vector2(0f, 1f), new Vector2(32f, -30f), new Vector2(50f, 50f));
+    }
+
+    // ボスはドクロ、ゴールデンラッシュはコイン、ハードは炎のマーク。
+    // まだ遊べないステージにも出して「もうすぐボス」「もうすぐラッシュ」と先が楽しみになるようにする
+    string badgeKey = BadgeOf(stage, type);
+    if (badgeKey != null)
+    {
+      var badge = PixelUI.CreateIcon(rect, badgeKey, BadgeScale);
+      PixelUI.Place(badge.rectTransform, new Vector2(1f, 1f), new Vector2(-26f, -26f), badge.rectTransform.sizeDelta);
+    }
 
     if (!isUnlocked)
     {
@@ -116,21 +185,22 @@ public class StageSelectScreen : MonoBehaviour
       PixelUI.Place(lockIcon.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero, lockIcon.rectTransform.sizeDelta);
       return;
     }
-
-    // ボスはドクロ、ハードは炎のマーク
-    if (type != StageType.Normal)
-    {
-      var badge = PixelUI.CreateIcon(rect, type == StageType.Boss ? "skull" : "flame", BadgeScale);
-      PixelUI.Place(badge.rectTransform, new Vector2(1f, 1f), new Vector2(-34f, -34f), badge.rectTransform.sizeDelta);
-    }
-    ((RectTransform)button.GetComponentInChildren<Text>().transform).anchoredPosition = new Vector2(0f, 18f);
+    ((RectTransform)button.GetComponentInChildren<Text>().transform).anchoredPosition = new Vector2(0f, 14f);
 
     int stars = Progress.GetStars(stage);
     for (int i = 0; i < 3; i++)
     {
       var star = PixelUI.CreateIcon(rect, i < stars ? "star" : "star_empty", StarScale);
-      PixelUI.Place(star.rectTransform, new Vector2(0.5f, 0f), new Vector2((i - 1) * 40f, 36f), star.rectTransform.sizeDelta);
+      PixelUI.Place(star.rectTransform, new Vector2(0.5f, 0f), new Vector2((i - 1) * 32f, 28f), star.rectTransform.sizeDelta);
     }
+  }
+
+  static string BadgeOf(int stage, StageType type)
+  {
+    if (type == StageType.Boss) return "skull";
+    if (StageDatabase.HasGoldenRush(stage)) return "coin";
+    if (type == StageType.Hard) return "flame";
+    return null;
   }
 
   void StartStage(int stage)
@@ -139,28 +209,17 @@ public class StageSelectScreen : MonoBehaviour
     {
       return;
     }
-    PlayButtonSound();
     RunState.SelectedStage = stage;
     FadeManager.Instance.LoadScene("StagePlay", FadeSeconds);
   }
 
   void OpenSkillTree()
   {
-    PlayButtonSound();
-    new SkillTreeScreen(PixelUI.CreateOverlayCanvas("SkillTreeCanvas", 100).transform, () => { PlayButtonSound(); Refresh(); });
+    new SkillTreeScreen(PixelUI.CreateOverlayCanvas("SkillTreeCanvas", 100).transform, Refresh);
   }
 
   void OpenVersus()
   {
-    PlayButtonSound();
-    new VersusSetupScreen(PixelUI.CreateOverlayCanvas("VersusSetupCanvas", 100).transform, PlayButtonSound);
-  }
-
-  void PlayButtonSound()
-  {
-    if (OptionManager.isSePlaying && ButtonSound != null)
-    {
-      AudioSource.PlayClipAtPoint(ButtonSound, Camera.main.transform.position);
-    }
+    new VersusSetupScreen(PixelUI.CreateOverlayCanvas("VersusSetupCanvas", 100).transform, () => SoundEffects.Play(Sfx.Button));
   }
 }

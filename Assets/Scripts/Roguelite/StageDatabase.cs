@@ -23,6 +23,8 @@ public class FloorData
   public float BallMinSpeed;
   public float BallMaxSpeed;
   public bool IsBallFading;
+  // 1発で倒せる金のスライムだけが並ぶ、ごほうびの階層
+  public bool IsGoldenRush;
 }
 
 public struct MonsterSpawn
@@ -34,6 +36,10 @@ public struct MonsterSpawn
   // 横に歩く速さ（0なら歩かない）と歩く幅
   public float WalkSpeed;
   public float WalkRange;
+  // 倒すとまわりを巻きこんで爆発する（爆弾どうしは連鎖する）
+  public bool IsBomb;
+  // 金色：倒すとジェムとコインがたくさん出る（ふだんは遊ぶたびにランダムで決める。ゴールデンラッシュでは全部が金色）
+  public bool IsGolden;
 }
 
 // ステージ番号から、ステージ・階層の内容を決める（100ステージを手作業で作らずに済むように）
@@ -42,11 +48,18 @@ public static class StageDatabase
   public const int StageCount = 100;
   const int HardInterval = 3;
   const int BossInterval = 7;
-  const int MaxMonsters = 15;
+  const int MaxMonsters = 35;
+  // 1階層目の数と、階層が進むごとに増える数（ステージの中でも強くなっていくので、敵も増やしていく）
+  const int BaseMonsters = 12;
+  const int MonstersPerFloor = 4;
+  const int MonstersAtLastStage = 12;
+  const int HardExtraMonsters = 4;
   const float AdvanceStepY = 0.3f;
   // 属性モンスター・歩くモンスターが出始めるステージと、出る割合の上限
   const int ElementStartStage = 4;
   const int WalkerStartStage = 5;
+  const int BombStartStage = 2;
+  const float BombRatio = 0.12f;
   const float MaxSpecialRatio = 0.5f;
   const int AdvanceStartStage = 3;
   const int AdvanceNormalStage = 10;
@@ -55,9 +68,71 @@ public static class StageDatabase
   const float MinWalkRange = 0.2f;
   const float MaxWalkRange = 0.8f;
 
-  // 敵を置ける段（敵の親オブジェクトからの高さ）。上の段から順に埋める（3段目は敵バーより手前で、狙いやすいが数が増える）
-  static readonly float[] RowOffsetY = { 0f, 0.5f, -1.25f };
+  // 敵を置ける段（敵の親オブジェクトからの高さ）。この順に埋める（マイナスの段は敵バーより手前で、狙いやすい）
+  static readonly float[] RowOffsetY = { 0f, 0.5f, -1.5f, -2f, 1f, -2.5f, -3f };
   static readonly float[] ColumnX = { -2f, -1f, 0f, 1f, 2f };
+
+  const int FadingBallStartStage = 6;
+
+  // 10ステージごとに、最後のひとつ前の階層が「ゴールデンラッシュ」になる。
+  // ジェムを一気に集めて強くなり、最後の階層をその強さで遊べる（10面まで続けて遊んだごほうび）
+  const int GoldenRushInterval = 10;
+  const int GoldenRushMonsters = 30;
+
+  public static bool HasGoldenRush(int stage)
+  {
+    return stage % GoldenRushInterval == 0;
+  }
+
+  // 結果画面で「もう1面」と思ってもらうため、すぐ先にあるボスやゴールデンラッシュを知らせる。近くになければ null
+  const int UpcomingLookAhead = 3;
+
+  public static string UpcomingEvent(int clearedStage)
+  {
+    for (int stage = clearedStage + 1; stage <= Mathf.Min(clearedStage + UpcomingLookAhead, StageCount); stage++)
+    {
+      string name = GetType(stage) == StageType.Boss ? "巨大ボス" : HasGoldenRush(stage) ? "ゴールデンラッシュ" : null;
+      if (name != null)
+      {
+        int distance = stage - clearedStage;
+        return distance == 1 ? "つぎは " + name + "!" : "あと" + distance + "面で " + name + "!";
+      }
+    }
+    return null;
+  }
+
+  public static bool IsGoldenRush(int stage, int floorIndex)
+  {
+    return HasGoldenRush(stage) && floorIndex == GetFloorCount(stage) - 2;
+  }
+
+  // ステージの最初に出す「このステージの新しいこと」。新しいものが毎回出てきて、先が見たくなるようにする
+  public static string GetIntro(int stage)
+  {
+    string intro = GetNewThingIntro(stage);
+    if (!HasGoldenRush(stage))
+    {
+      return intro;
+    }
+    string rush = "かいそう" + (GetFloorCount(stage) - 1) + "は ゴールデンラッシュ!";
+    return intro == null ? rush : intro + "\n" + rush;
+  }
+
+  static string GetNewThingIntro(int stage)
+  {
+    if (stage == 1) return "指でバーを動かして 打ち返そう!\n当たる瞬間に振ると カーブ!";
+    if (stage == BombStartStage) return "爆弾スライム登場!\nたおすと まわりごと ばくはつ";
+    if (stage == AdvanceStartStage) return "モンスターが せまってくる!\n赤い線まで来たら 仲間が食べられる";
+    if (stage == ElementStartStage) return "属性モンスター登場!\nたおすとボールが 炎・氷・雷に";
+    if (stage == WalkerStartStage) return "歩くモンスター登場!";
+    if (stage == FadingBallStartStage) return "HARD: ボールが ときどき消える!";
+    switch (GetType(stage))
+    {
+      case StageType.Boss: return "巨大ボス出現!\n弾はバーで ふせげる";
+      case StageType.Hard: return "HARD: 敵が多くて かたい!";
+    }
+    return null;
+  }
 
   public static StageType GetType(int stage)
   {
@@ -91,9 +166,9 @@ public static class StageDatabase
     var floor = new FloorData
     {
       IsBossFloor = type == StageType.Boss && floorIndex == floorCount - 1,
-      BallMinSpeed = 5f + t * 1.5f,
-      BallMaxSpeed = 7.5f + t * 4.5f,
-      IsBallFading = isHard && stage >= 6,
+      BallMinSpeed = 5.5f + t * 1.5f,
+      BallMaxSpeed = 8f + t * 4f,
+      IsBallFading = isHard && stage >= FadingBallStartStage,
       HasEnemyBar = true,
       EnemyStyle = GetEnemyStyle(stage),
       // 対戦の「つよい」ほどにはしない（ステージ100でも 0.8 くらい）
@@ -106,16 +181,20 @@ public static class StageDatabase
     if (floor.IsBossFloor)
     {
       floor.HasEnemyBar = false;
-      floor.BossHp = 20 + stage;
+      floor.BossHp = 30 + stage * 2;
       floor.BossMoveSpeed = 1f + t * 1.5f;
       floor.BossShotInterval = Mathf.Max(1.2f, 2.6f - t * 1.4f);
       floor.BulletSpeed = 2.5f + t * 2f;
       return floor;
     }
+    if (IsGoldenRush(stage, floorIndex))
+    {
+      return BuildGoldenRush(floor, random);
+    }
 
-    int count = 3 + Mathf.RoundToInt(t * 9) + floorIndex + (isHard ? 2 : 0);
+    int count = BaseMonsters + floorIndex * MonstersPerFloor + Mathf.RoundToInt(t * MonstersAtLastStage) + (isHard ? HardExtraMonsters : 0);
     count = Mathf.Min(count, MaxMonsters);
-    int maxHp = 1 + Mathf.FloorToInt(t * 3) + (isHard ? 1 : 0);
+    int maxHp = 1 + Mathf.FloorToInt(t * 4) + floorIndex / 2 + (isHard ? 1 : 0);
     float elementRatio = Mathf.Clamp01((stage - ElementStartStage + 1) / 30f) * MaxSpecialRatio;
     float walkerRatio = Mathf.Clamp01((stage - WalkerStartStage + 1) / 40f) * MaxSpecialRatio;
     var positions = PickPositions(count, random);
@@ -126,6 +205,10 @@ public static class StageDatabase
       {
         spawn.Element = (Element)random.Next(1, 4);
       }
+      else if (stage >= BombStartStage && random.NextDouble() < BombRatio)
+      {
+        spawn.IsBomb = true;
+      }
       float walkRange = FreeWalkRange(position, positions);
       if (walkRange >= MinWalkRange && random.NextDouble() < walkerRatio)
       {
@@ -133,6 +216,20 @@ public static class StageDatabase
         spawn.WalkRange = walkRange;
       }
       floor.Monsters.Add(spawn);
+    }
+    return floor;
+  }
+
+  // 敵のバーも迫ってくる動きもなく、思いきり倒しまくれるようにする
+  static FloorData BuildGoldenRush(FloorData floor, System.Random random)
+  {
+    floor.IsGoldenRush = true;
+    floor.HasEnemyBar = false;
+    floor.AdvanceEveryHits = 0;
+    floor.IsBallFading = false;
+    foreach (var position in PickPositions(GoldenRushMonsters, random))
+    {
+      floor.Monsters.Add(new MonsterSpawn { Offset = position, Hp = 1, IsGolden = true });
     }
     return floor;
   }

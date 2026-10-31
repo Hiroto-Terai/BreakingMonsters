@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public static class PixelUI
 {
   // ドット文字がにじまないよう、フォントの元の大きさ(12)の倍数を使う
+  public const int TinyFont = 24;
   public const int SmallFont = 36;
   public const int MediumFont = 48;
   public const int LargeFont = 72;
@@ -145,6 +146,7 @@ public static class PixelUI
     colors.pressedColor = new Color(0.7f, 0.7f, 0.7f);
     colors.disabledColor = new Color(0.45f, 0.45f, 0.45f);
     button.colors = colors;
+    button.onClick.AddListener(() => SoundEffects.Play(Sfx.Button));
     button.onClick.AddListener(onClick);
     var text = CreateText(panel.transform, label, fontSize, PixelArt.White);
     Stretch(text.rectTransform);
